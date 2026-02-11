@@ -15,8 +15,12 @@
   },
   "servers": [
     {
-      "url": "http://localhost:3001/api",
+      "url": "http://localhost:3000/api",
       "description": "Development server"
+    },
+    {
+      "url": "https://my-todolist-api.com/api",
+      "description": "Production server"
     }
   ],
   "tags": [
@@ -61,7 +65,7 @@
                     "type": "string",
                     "format": "password",
                     "minLength": 8,
-                    "description": "비밀번호 (최소 8자)",
+                    "description": "비밀번호 (최소 8자, 특수문자 포함 권장)",
                     "example": "SecurePass123!"
                   }
                 }
@@ -102,6 +106,13 @@
                     "value": {
                       "error": "E-003",
                       "message": "Invalid email format"
+                    }
+                  },
+                  "validationError": {
+                    "summary": "유효성 검증 오류",
+                    "value": {
+                      "error": "E-004",
+                      "message": "Validation failed"
                     }
                   }
                 }
@@ -185,6 +196,25 @@
               }
             }
           },
+          "400": {
+            "description": "잘못된 요청 - 필수 필드 누락",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "missingFields": {
+                    "summary": "필수 필드 누락",
+                    "value": {
+                      "error": "E-005",
+                      "message": "Username and password are required"
+                    }
+                  }
+                }
+              }
+            }
+          },
           "401": {
             "description": "인증 실패",
             "content": {
@@ -211,7 +241,7 @@
       "get": {
         "tags": ["Todos"],
         "summary": "할일 목록 조회",
-        "description": "인증된 사용자의 할일 목록을 조회합니다.",
+        "description": "인증된 사용자의 할일 목록을 조회합니다. 본인의 할일만 조회 가능합니다.",
         "operationId": "getTodos",
         "security": [
           {
@@ -330,6 +360,15 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "unauthorized": {
+                    "summary": "E-101: 인증 필요",
+                    "value": {
+                      "error": "E-101",
+                      "message": "Authentication required"
+                    }
+                  }
                 }
               }
             }
@@ -338,11 +377,11 @@
       }
     },
     "/todos/{id}": {
-      "put": {
+      "get": {
         "tags": ["Todos"],
-        "summary": "할일 수정",
-        "description": "기존 할일의 정보를 수정합니다. 본인의 할일만 수정 가능합니다.",
-        "operationId": "updateTodo",
+        "summary": "특정 할일 조회",
+        "description": "특정 할일의 상세 정보를 조회합니다. 본인의 할일만 조회 가능합니다.",
+        "operationId": "getTodoById",
         "security": [
           {
             "bearerAuth": []
@@ -360,37 +399,9 @@
             }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "title": {
-                    "type": "string",
-                    "description": "할일 제목",
-                    "example": "프로젝트 기획서 최종 검토"
-                  },
-                  "description": {
-                    "type": "string",
-                    "description": "할일 상세 설명",
-                    "example": "피드백 반영 후 최종 검토"
-                  },
-                  "due_date": {
-                    "type": "string",
-                    "format": "date",
-                    "description": "마감일",
-                    "example": "2026-02-25"
-                  }
-                }
-              }
-            }
-          }
-        },
         "responses": {
           "200": {
-            "description": "할일 수정 성공",
+            "description": "할일 조회 성공",
             "content": {
               "application/json": {
                 "schema": {
@@ -449,10 +460,143 @@
           }
         }
       },
+      "put": {
+        "tags": ["Todos"],
+        "summary": "할일 수정",
+        "description": "기존 할일의 정보를 수정합니다. 본인의 할일만 수정 가능합니다.",
+        "operationId": "updateTodo",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "할일 ID",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["title"],
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 255,
+                    "description": "할일 제목 (필수)",
+                    "example": "프로젝트 기획서 최종 검토"
+                  },
+                  "description": {
+                    "type": "string",
+                    "description": "할일 상세 설명",
+                    "example": "피드백 반영 후 최종 검토"
+                  },
+                  "due_date": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "마감일",
+                    "example": "2026-02-25"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "할일 수정 성공",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Todo"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "missingTitle": {
+                    "summary": "E-103: 제목 누락",
+                    "value": {
+                      "error": "E-103",
+                      "message": "Title is required"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "인증 필요",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "접근 거부",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "accessDenied": {
+                    "summary": "E-102: 접근 거부",
+                    "value": {
+                      "error": "E-102",
+                      "message": "Access denied"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "할일을 찾을 수 없음",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                },
+                "examples": {
+                  "notFound": {
+                    "summary": "E-104: 할일을 찾을 수 없음",
+                    "value": {
+                      "error": "E-104",
+                      "message": "Todo not found"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "delete": {
         "tags": ["Todos"],
         "summary": "할일 삭제",
-        "description": "할일을 삭제합니다. 본인의 할일만 삭제 가능합니다.",
+        "description": "할일을 삭제합니다. 본인의 할일만 삭제 가능합니다. 삭제 시 되돌릴 수 없습니다.",
         "operationId": "deleteTodo",
         "security": [
           {
@@ -679,7 +823,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "JWT 토큰을 사용한 인증. 로그인 또는 회원가입 시 발급받은 토큰을 Authorization 헤더에 포함합니다."
+        "description": "JWT 토큰을 사용한 인증. 로그인 또는 회원가입 시 발급받은 토큰을 Authorization 헤더에 Bearer 형식으로 포함합니다. (예: Authorization: Bearer <token>)"
       }
     }
   }
