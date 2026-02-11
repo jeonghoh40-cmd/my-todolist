@@ -43,20 +43,20 @@
 - **의존성**: 없음
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] PostgreSQL 17 서버 실행 확인 (`psql --version` 출력 확인)
-  - [ ] postgres 사용자로 접속 가능 확인
-  - [ ] 로컬 연결 포트 5432 확인
-  - [ ] 데이터베이스 접속 테스트 완료
+  - [x] PostgreSQL 17 서버 실행 확인 (`psql --version` 출력 확인)
+  - [x] postgres 사용자로 접속 가능 확인
+  - [x] 로컬 연결 포트 5432 확인
+  - [x] 데이터베이스 접속 테스트 완료
 
 #### Task 2.1.2: my_todolist 데이터베이스 생성
 - **설명**: 애플리케이션용 데이터베이스 생성
 - **의존성**: Task 2.1.1
 - **소요 시간**: 10분
 - **완료 조건**:
-  - [ ] `CREATE DATABASE my_todolist;` 실행 성공
-  - [ ] UTF-8 인코딩 확인
-  - [ ] 데이터베이스 접속 확인 (`\c my_todolist`)
-  - [ ] 연결 정보 기록 (host, port, dbname, user, password)
+  - [x] `CREATE DATABASE my_todolist;` 실행 성공
+  - [x] UTF-8 인코딩 확인
+  - [x] 데이터베이스 접속 확인 (`\c my_todolist`)
+  - [x] 연결 정보 기록 (host, port, dbname, user, password)
 
 ### 2.2 스키마 설계 및 테이블 생성
 
@@ -65,7 +65,7 @@
 - **의존성**: Task 2.1.2
 - **소요 시간**: 20분
 - **완료 조건**:
-  - [ ] 테이블 생성 SQL 작성 완료:
+  - [x] 테이블 생성 SQL 작성 완료:
     ```sql
     CREATE TABLE users (
       id SERIAL PRIMARY KEY,
@@ -75,17 +75,17 @@
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     ```
-  - [ ] SQL 실행 성공
-  - [ ] `\d users` 명령으로 테이블 구조 확인
-  - [ ] UNIQUE 제약 조건 작동 테스트 (중복 username 삽입 시 에러 확인)
-  - [ ] INSERT 테스트 데이터 삽입 성공
+  - [x] SQL 실행 성공
+  - [x] `\d users` 명령으로 테이블 구조 확인
+  - [x] UNIQUE 제약 조건 작동 테스트 (중복 username 삽입 시 에러 확인)
+  - [x] INSERT 테스트 데이터 삽입 성공
 
 #### Task 2.2.2: TODOS 테이블 생성 및 검증
 - **설명**: 할일 정보를 저장하는 테이블 생성
 - **의존성**: Task 2.2.1
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] 테이블 생성 SQL 작성 완료:
+  - [x] 테이블 생성 SQL 작성 완료:
     ```sql
     CREATE TABLE todos (
       id SERIAL PRIMARY KEY,
@@ -98,32 +98,32 @@
       updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     ```
-  - [ ] SQL 실행 성공
-  - [ ] `\d todos` 명령으로 테이블 구조 확인
-  - [ ] 외래 키 제약 조건 확인 (users 테이블 참조)
-  - [ ] ON DELETE CASCADE 동작 테스트 (사용자 삭제 시 할일도 삭제됨)
-  - [ ] INSERT 테스트 데이터 삽입 성공
+  - [x] SQL 실행 성공
+  - [x] `\d todos` 명령으로 테이블 구조 확인
+  - [x] 외래 키 제약 조건 확인 (users 테이블 참조)
+  - [x] ON DELETE CASCADE 동작 테스트 (사용자 삭제 시 할일도 삭제됨)
+  - [x] INSERT 테스트 데이터 삽입 성공
 
 #### Task 2.2.3: 인덱스 생성 및 성능 최적화
 - **설명**: 쿼리 성능 향상을 위한 인덱스 생성
 - **의존성**: Task 2.2.2
 - **소요 시간**: 15분
 - **완료 조건**:
-  - [ ] `CREATE INDEX idx_todos_user_id ON todos(user_id);` 실행 성공
-  - [ ] `CREATE INDEX idx_todos_is_completed ON todos(is_completed);` 실행 성공
-  - [ ] `\di` 명령으로 인덱스 목록 확인
-  - [ ] EXPLAIN ANALYZE로 쿼리 플랜 확인 (인덱스 사용 확인)
+  - [x] `CREATE INDEX idx_todos_user_id ON todos(user_id);` 실행 성공
+  - [x] `CREATE INDEX idx_todos_is_completed ON todos(is_completed);` 실행 성공
+  - [x] `\di` 명령으로 인덱스 목록 확인
+  - [x] EXPLAIN ANALYZE로 쿼리 플랜 확인 (인덱스 사용 확인)
 
 #### Task 2.2.4: 스키마 SQL 파일 생성
 - **설명**: 재사용 가능한 스키마 생성 스크립트 작성
 - **의존성**: Task 2.2.3
 - **소요 시간**: 15분
 - **완료 조건**:
-  - [ ] `backend/src/db/schema.sql` 파일 생성
-  - [ ] 모든 CREATE TABLE 문 포함
-  - [ ] 모든 CREATE INDEX 문 포함
-  - [ ] 초기화용 DROP TABLE IF EXISTS 문 포함
-  - [ ] 스크립트 실행 테스트 (`psql -d my_todolist -f schema.sql`)
+  - [x] `backend/src/db/schema.sql` 파일 생성
+  - [x] 모든 CREATE TABLE 문 포함
+  - [x] 모든 CREATE INDEX 문 포함
+  - [x] 초기화용 DROP TABLE IF EXISTS 문 포함
+  - [x] 스크립트 실행 테스트 (`psql -d my_todolist -f schema.sql`)
 
 ---
 
