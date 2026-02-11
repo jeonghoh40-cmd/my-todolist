@@ -1,0 +1,92 @@
+<svg width="1024" height="768" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1024" height="768" fill="#f1f3f4"/>
+
+  <!-- Page Title & Subtitle -->
+  <text x="512" y="100" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="32" font-weight="500" fill="#202124">
+    my-todolist
+  </text>
+  <text x="512" y="135" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="16" font-weight="400" fill="#5f6368">
+    간편한 할일 관리 서비스
+  </text>
+
+  <!-- Card Container -->
+  <g filter="url(#card-shadow)">
+    <rect x="312" y="180" width="400" height="500" rx="8" fill="#ffffff"/>
+  </g>
+
+  <!-- Card Header -->
+  <text x="512" y="230" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="24" font-weight="500" fill="#202124">
+    회원가입
+  </text>
+
+  <!-- Username Field -->
+  <text x="342" y="285" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="14" font-weight="400" fill="#5f6368">
+    Username
+  </text>
+  <rect x="342" y="295" width="340" height="48" rx="4" fill="#ffffff" stroke="#dadce0" stroke-width="1"/>
+  <text x="352" y="323" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="16" font-weight="400" fill="#9aa0a6">
+    사용자명을 입력하세요
+  </text>
+
+  <!-- Password Field -->
+  <text x="342" y="375" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="14" font-weight="400" fill="#5f6368">
+    Password
+  </text>
+  <rect x="342" y="385" width="340" height="48" rx="4" fill="#ffffff" stroke="#dadce0" stroke-width="1"/>
+  <text x="352" y="413" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="16" font-weight="400" fill="#9aa0a6">
+    ••••••••
+  </text>
+
+  <!-- Email Field -->
+  <text x="342" y="465" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="14" font-weight="400" fill="#5f6368">
+    Email
+  </text>
+  <rect x="342" y="475" width="340" height="48" rx="4" fill="#ffffff" stroke="#dadce0" stroke-width="1"/>
+  <text x="352" y="503" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="16" font-weight="400" fill="#9aa0a6">
+    example@email.com
+  </text>
+
+  <!-- Register Button -->
+  <g filter="url(#button-shadow)">
+    <rect x="342" y="555" width="340" height="52" rx="4" fill="#1a73e8"/>
+    <text x="512" y="586" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="16" font-weight="500" fill="#ffffff" letter-spacing="0.15">
+      회원가입
+    </text>
+  </g>
+
+  <!-- Login Link -->
+  <text x="512" y="640" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="14" font-weight="400" fill="#5f6368">
+    이미 계정이 있으신가요?
+  </text>
+  <text x="512" y="665" text-anchor="middle" font-family="'Noto Sans KR', 'Google Sans', 'Roboto', sans-serif" font-size="14" font-weight="500" fill="#1a73e8" cursor="pointer">
+    로그인
+  </text>
+
+  <!-- Shadow Filters -->
+  <defs>
+    <filter id="card-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="0" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.1"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <filter id="button-shadow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="1"/>
+      <feOffset dx="0" dy="1" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.15"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+</svg>
