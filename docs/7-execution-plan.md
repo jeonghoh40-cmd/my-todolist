@@ -136,22 +136,22 @@
 - **의존성**: 없음
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] `backend/` 디렉토리 생성
-  - [ ] `npm init -y` 실행 완료
-  - [ ] 필수 패키지 설치:
+  - [x] `backend/` 디렉토리 생성
+  - [x] `npm init -y` 실행 완료
+  - [x] 필수 패키지 설치:
     - express
     - pg (PostgreSQL 클라이언트)
     - bcrypt
     - jsonwebtoken
     - dotenv
     - cors
-  - [ ] 개발 패키지 설치:
+  - [x] 개발 패키지 설치:
     - nodemon
     - eslint
-  - [ ] `package.json`에 scripts 추가:
+  - [x] `package.json`에 scripts 추가:
     - `"start": "node src/server.js"`
     - `"dev": "nodemon src/server.js"`
-  - [ ] 디렉토리 구조 생성:
+  - [x] 디렉토리 구조 생성:
     ```
     backend/
     ├── src/
@@ -174,8 +174,8 @@
 - **의존성**: Task 3.1.1
 - **소요 시간**: 10분
 - **완료 조건**:
-  - [ ] `.env` 파일 생성
-  - [ ] 데이터베이스 연결 정보 설정:
+  - [x] `.env` 파일 생성
+  - [x] 데이터베이스 연결 정보 설정:
     ```
     DB_HOST=localhost
     DB_PORT=5432
@@ -183,45 +183,45 @@
     DB_USER=postgres
     DB_PASSWORD=your_password
     ```
-  - [ ] JWT 시크릿 키 설정:
+  - [x] JWT 시크릿 키 설정:
     ```
     JWT_SECRET=your_super_secret_jwt_key_change_this
     JWT_EXPIRES_IN=24h
     ```
-  - [ ] 서버 포트 설정:
+  - [x] 서버 포트 설정:
     ```
     PORT=3001
     NODE_ENV=development
     ```
-  - [ ] `.gitignore`에 `.env` 추가 확인
+  - [x] `.gitignore`에 `.env` 추가 확인
 
 #### Task 3.1.3: PostgreSQL 연결 설정 (pg 라이브러리)
 - **설명**: pg 라이브러리를 사용한 데이터베이스 연결 풀 설정
 - **의존성**: Task 3.1.2, Task 2.1.2
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] `src/db/connection.js` 파일 생성
-  - [ ] pg.Pool 인스턴스 생성 및 export
-  - [ ] 환경 변수 로드 (dotenv)
-  - [ ] 연결 풀 설정 (max: 20, idleTimeoutMillis: 30000)
-  - [ ] 데이터베이스 연결 테스트 함수 작성
-  - [ ] `node src/db/connection.js` 실행 시 연결 성공 메시지 출력
-  - [ ] ⚠️ Prisma 사용하지 않음 확인
+  - [x] `src/db/connection.js` 파일 생성
+  - [x] pg.Pool 인스턴스 생성 및 export
+  - [x] 환경 변수 로드 (dotenv)
+  - [x] 연결 풀 설정 (max: 20, idleTimeoutMillis: 30000)
+  - [x] 데이터베이스 연결 테스트 함수 작성
+  - [x] `node src/db/connection.js` 실행 시 연결 성공 메시지 출력
+  - [x] ⚠️ Prisma 사용하지 않음 확인
 
 #### Task 3.1.4: Express 서버 기본 설정
 - **설명**: Express 앱 초기화 및 기본 미들웨어 설정
 - **의존성**: Task 3.1.3
 - **소요 시간**: 20분
 - **완료 조건**:
-  - [ ] `src/server.js` 파일 생성
-  - [ ] Express 앱 생성 및 미들웨어 설정:
+  - [x] `src/server.js` 파일 생성
+  - [x] Express 앱 생성 및 미들웨어 설정:
     - express.json()
     - express.urlencoded()
     - cors()
-  - [ ] 헬스 체크 엔드포인트 추가: `GET /api/health`
-  - [ ] 서버 시작 코드 작성 (PORT 환경 변수 사용)
-  - [ ] `npm run dev` 실행 시 서버 정상 시작 확인
-  - [ ] `curl http://localhost:3001/api/health` 응답 확인
+  - [x] 헬스 체크 엔드포인트 추가: `GET /api/health`
+  - [x] 서버 시작 코드 작성 (PORT 환경 변수 사용)
+  - [x] `npm run dev` 실행 시 서버 정상 시작 확인
+  - [x] `curl http://localhost:3001/api/health` 응답 확인
 
 ### 3.2 인증 관련 기능 개발
 
@@ -230,15 +230,15 @@
 - **의존성**: Task 3.1.1
 - **소요 시간**: 20분
 - **완료 조건**:
-  - [ ] `src/utils/password.utils.js` 파일 생성
-  - [ ] `hashPassword(password)` 함수 구현:
+  - [x] `src/utils/password.utils.js` 파일 생성
+  - [x] `hashPassword(password)` 함수 구현:
     - bcrypt.hash() 사용
     - cost factor 10 이상
     - 반환: 해시된 비밀번호 문자열
-  - [ ] `comparePassword(password, hash)` 함수 구현:
+  - [x] `comparePassword(password, hash)` 함수 구현:
     - bcrypt.compare() 사용
     - 반환: boolean (일치 여부)
-  - [ ] 함수 테스트:
+  - [x] 함수 테스트:
     - 동일 비밀번호 해시 시 다른 해시 생성 확인
     - comparePassword() 정상 동작 확인
 
@@ -247,16 +247,16 @@
 - **의존성**: Task 3.1.2
 - **소요 시간**: 20분
 - **완료 조건**:
-  - [ ] `src/utils/jwt.utils.js` 파일 생성
-  - [ ] `generateToken(payload)` 함수 구현:
+  - [x] `src/utils/jwt.utils.js` 파일 생성
+  - [x] `generateToken(payload)` 함수 구현:
     - jwt.sign() 사용
     - payload: { userId, username }
     - 유효기간: 24시간 (환경 변수)
     - 반환: JWT 토큰 문자열
-  - [ ] `verifyToken(token)` 함수 구현:
+  - [x] `verifyToken(token)` 함수 구현:
     - jwt.verify() 사용
     - 반환: decoded payload 또는 null
-  - [ ] 함수 테스트:
+  - [x] 함수 테스트:
     - 토큰 생성 및 검증 성공 확인
     - 잘못된 토큰 검증 시 null 반환 확인
 
@@ -265,20 +265,20 @@
 - **의존성**: Task 3.2.2
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] `src/middleware/auth.middleware.js` 파일 생성
-  - [ ] `authenticate` 미들웨어 함수 구현:
+  - [x] `src/middleware/auth.middleware.js` 파일 생성
+  - [x] `authenticate` 미들웨어 함수 구현:
     - Authorization 헤더에서 토큰 추출 (Bearer 형식)
     - verifyToken() 호출하여 토큰 검증
     - 성공 시 req.user에 사용자 정보 추가
     - 실패 시 HTTP 401 응답 + E-101 에러
-  - [ ] 에러 응답 형식:
+  - [x] 에러 응답 형식:
     ```json
     {
       "error": "E-101",
       "message": "Authentication required"
     }
     ```
-  - [ ] 미들웨어 테스트:
+  - [x] 미들웨어 테스트:
     - 유효한 토큰 전달 시 next() 호출 확인
     - 토큰 없음/잘못된 토큰 시 401 응답 확인
 
@@ -289,18 +289,18 @@
 - **의존성**: Task 3.1.3, Task 2.2.1
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] `src/models/user.model.js` 파일 생성
-  - [ ] `createUser(username, password, email)` 함수 구현:
+  - [x] `src/models/user.model.js` 파일 생성
+  - [x] `createUser(username, password, email)` 함수 구현:
     - SQL: `INSERT INTO users (username, password, email) VALUES ($1, $2, $3) RETURNING id, username, email, created_at`
     - 파라미터화된 쿼리 사용 (SQL Injection 방어)
     - 반환: 생성된 사용자 객체
-  - [ ] `findUserByUsername(username)` 함수 구현:
+  - [x] `findUserByUsername(username)` 함수 구현:
     - SQL: `SELECT * FROM users WHERE username = $1`
     - 반환: 사용자 객체 또는 null
-  - [ ] `findUserById(userId)` 함수 구현:
+  - [x] `findUserById(userId)` 함수 구현:
     - SQL: `SELECT id, username, email, created_at FROM users WHERE id = $1`
     - 반환: 사용자 객체 또는 null
-  - [ ] 함수 테스트:
+  - [x] 함수 테스트:
     - 사용자 생성 성공 확인
     - username 중복 시 에러 확인
     - 사용자 조회 성공 확인
@@ -310,19 +310,19 @@
 - **의존성**: Task 3.3.1, Task 3.2.1, Task 3.2.2
 - **소요 시간**: 40분
 - **완료 조건**:
-  - [ ] `src/services/auth.service.js` 파일 생성
-  - [ ] `register(username, password, email)` 함수 구현:
+  - [x] `src/services/auth.service.js` 파일 생성
+  - [x] `register(username, password, email)` 함수 구현:
     - username 중복 확인 (findUserByUsername)
     - 비밀번호 해시 (hashPassword)
     - 사용자 생성 (createUser)
     - 중복 시 에러 throw: { code: 'E-001', message: 'Username already exists', status: 409 }
-  - [ ] `login(username, password)` 함수 구현:
+  - [x] `login(username, password)` 함수 구현:
     - 사용자 조회 (findUserByUsername)
     - 비밀번호 검증 (comparePassword)
     - JWT 토큰 생성 (generateToken)
     - 실패 시 에러 throw: { code: 'E-002', message: 'Invalid credentials', status: 401 }
-  - [ ] 이메일 형식 검증 함수 추가 (정규식)
-  - [ ] 함수 테스트:
+  - [x] 이메일 형식 검증 함수 추가 (정규식)
+  - [x] 함수 테스트:
     - 회원가입 성공 시나리오
     - username 중복 에러 시나리오
     - 로그인 성공 시나리오
@@ -333,32 +333,32 @@
 - **의존성**: Task 3.3.2
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] `src/controllers/auth.controller.js` 파일 생성
-  - [ ] `registerController(req, res)` 함수 구현:
+  - [x] `src/controllers/auth.controller.js` 파일 생성
+  - [x] `registerController(req, res)` 함수 구현:
     - req.body에서 username, password, email 추출
     - 입력 검증 (필수 필드 확인)
     - auth.service.register() 호출
     - 성공 시 HTTP 201 + 사용자 정보 반환
     - 에러 시 적절한 HTTP 상태 코드 + 에러 메시지
-  - [ ] `loginController(req, res)` 함수 구현:
+  - [x] `loginController(req, res)` 함수 구현:
     - req.body에서 username, password 추출
     - auth.service.login() 호출
     - 성공 시 HTTP 200 + JWT 토큰 반환
     - 에러 시 적절한 HTTP 상태 코드 + 에러 메시지
-  - [ ] 에러 핸들링 try-catch 추가
-  - [ ] 응답 형식 일관성 확인
+  - [x] 에러 핸들링 try-catch 추가
+  - [x] 응답 형식 일관성 확인
 
 #### Task 3.3.4: 인증 라우터 설정
 - **설명**: 인증 관련 API 라우팅
 - **의존성**: Task 3.3.3
 - **소요 시간**: 15분
 - **완료 조건**:
-  - [ ] `src/routes/auth.routes.js` 파일 생성
-  - [ ] Express Router 생성
-  - [ ] `POST /api/auth/register` 라우트 등록
-  - [ ] `POST /api/auth/login` 라우트 등록
-  - [ ] `src/server.js`에 라우터 등록: `app.use('/api/auth', authRoutes)`
-  - [ ] Postman/Thunder Client 테스트:
+  - [x] `src/routes/auth.routes.js` 파일 생성
+  - [x] Express Router 생성
+  - [x] `POST /api/auth/register` 라우트 등록
+  - [x] `POST /api/auth/login` 라우트 등록
+  - [x] `src/server.js`에 라우터 등록: `app.use('/api/auth', authRoutes)`
+  - [x] Postman/Thunder Client 테스트:
     - 회원가입 성공 (HTTP 201)
     - username 중복 에러 (HTTP 409)
     - 로그인 성공 (HTTP 200 + 토큰)
@@ -371,26 +371,26 @@
 - **의존성**: Task 3.1.3, Task 2.2.2
 - **소요 시간**: 40분
 - **완료 조건**:
-  - [ ] `src/models/todo.model.js` 파일 생성
-  - [ ] `createTodo(userId, title, description, dueDate)` 함수 구현:
+  - [x] `src/models/todo.model.js` 파일 생성
+  - [x] `createTodo(userId, title, description, dueDate)` 함수 구현:
     - SQL: `INSERT INTO todos (user_id, title, description, due_date) VALUES ($1, $2, $3, $4) RETURNING *`
     - 반환: 생성된 할일 객체
-  - [ ] `findTodosByUserId(userId)` 함수 구현:
+  - [x] `findTodosByUserId(userId)` 함수 구현:
     - SQL: `SELECT * FROM todos WHERE user_id = $1 ORDER BY created_at DESC`
     - 반환: 할일 배열
-  - [ ] `findTodoById(todoId)` 함수 구현:
+  - [x] `findTodoById(todoId)` 함수 구현:
     - SQL: `SELECT * FROM todos WHERE id = $1`
     - 반환: 할일 객체 또는 null
-  - [ ] `updateTodo(todoId, title, description, dueDate)` 함수 구현:
+  - [x] `updateTodo(todoId, title, description, dueDate)` 함수 구현:
     - SQL: `UPDATE todos SET title = $1, description = $2, due_date = $3, updated_at = CURRENT_TIMESTAMP WHERE id = $4 RETURNING *`
     - 반환: 수정된 할일 객체
-  - [ ] `deleteTodo(todoId)` 함수 구현:
+  - [x] `deleteTodo(todoId)` 함수 구현:
     - SQL: `DELETE FROM todos WHERE id = $1`
     - 반환: 삭제 성공 여부
-  - [ ] `toggleTodoComplete(todoId, isCompleted)` 함수 구현:
+  - [x] `toggleTodoComplete(todoId, isCompleted)` 함수 구현:
     - SQL: `UPDATE todos SET is_completed = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2 RETURNING *`
     - 반환: 수정된 할일 객체
-  - [ ] 함수 테스트:
+  - [x] 함수 테스트:
     - 할일 생성/조회/수정/삭제 성공 확인
 
 #### Task 3.4.2: 할일 서비스 개발 (비즈니스 로직)
@@ -398,29 +398,29 @@
 - **의존성**: Task 3.4.1
 - **소요 시간**: 40분
 - **완료 조건**:
-  - [ ] `src/services/todos.service.js` 파일 생성
-  - [ ] `createTodoService(userId, data)` 함수 구현:
+  - [x] `src/services/todos.service.js` 파일 생성
+  - [x] `createTodoService(userId, data)` 함수 구현:
     - title 필수 검증
     - createTodo() 호출
     - title 없으면 에러 throw: { code: 'E-103', message: 'Title is required', status: 400 }
-  - [ ] `getTodosService(userId)` 함수 구현:
+  - [x] `getTodosService(userId)` 함수 구현:
     - findTodosByUserId() 호출
-  - [ ] `updateTodoService(userId, todoId, data)` 함수 구현:
+  - [x] `updateTodoService(userId, todoId, data)` 함수 구현:
     - 할일 조회 (findTodoById)
     - 소유권 검증 (todo.user_id === userId)
     - title 필수 검증
     - updateTodo() 호출
     - 존재하지 않으면 에러: E-104
     - 권한 없으면 에러: E-102
-  - [ ] `deleteTodoService(userId, todoId)` 함수 구현:
+  - [x] `deleteTodoService(userId, todoId)` 함수 구현:
     - 소유권 검증
     - deleteTodo() 호출
-  - [ ] `toggleCompleteService(userId, todoId)` 함수 구현:
+  - [x] `toggleCompleteService(userId, todoId)` 함수 구현:
     - 할일 조회
     - 소유권 검증
     - isCompleted 토글
     - toggleTodoComplete() 호출
-  - [ ] 함수 테스트:
+  - [x] 함수 테스트:
     - 권한 검증 로직 테스트
     - 에러 케이스 테스트
 
@@ -429,42 +429,42 @@
 - **의존성**: Task 3.4.2, Task 3.2.3
 - **소요 시간**: 40분
 - **완료 조건**:
-  - [ ] `src/controllers/todos.controller.js` 파일 생성
-  - [ ] `getTodosController(req, res)` 함수 구현:
+  - [x] `src/controllers/todos.controller.js` 파일 생성
+  - [x] `getTodosController(req, res)` 함수 구현:
     - req.user.id로 userId 추출 (인증 미들웨어에서 설정)
     - getTodosService() 호출
     - HTTP 200 + 할일 배열 반환
-  - [ ] `createTodoController(req, res)` 함수 구현:
+  - [x] `createTodoController(req, res)` 함수 구현:
     - req.body에서 title, description, dueDate 추출
     - createTodoService() 호출
     - HTTP 201 + 생성된 할일 반환
-  - [ ] `updateTodoController(req, res)` 함수 구현:
+  - [x] `updateTodoController(req, res)` 함수 구현:
     - req.params.id로 todoId 추출
     - updateTodoService() 호출
     - HTTP 200 + 수정된 할일 반환
-  - [ ] `deleteTodoController(req, res)` 함수 구현:
+  - [x] `deleteTodoController(req, res)` 함수 구현:
     - deleteTodoService() 호출
     - HTTP 204 No Content 반환
-  - [ ] `toggleCompleteController(req, res)` 함수 구현:
+  - [x] `toggleCompleteController(req, res)` 함수 구현:
     - toggleCompleteService() 호출
     - HTTP 200 + 수정된 할일 반환
-  - [ ] 에러 핸들링 추가
+  - [x] 에러 핸들링 추가
 
 #### Task 3.4.4: 할일 라우터 설정
 - **설명**: 할일 관련 API 라우팅 (인증 미들웨어 적용)
 - **의존성**: Task 3.4.3
 - **소요 시간**: 20분
 - **완료 조건**:
-  - [ ] `src/routes/todos.routes.js` 파일 생성
-  - [ ] Express Router 생성
-  - [ ] 모든 라우트에 authenticate 미들웨어 적용
-  - [ ] `GET /api/todos` 라우트 등록
-  - [ ] `POST /api/todos` 라우트 등록
-  - [ ] `PUT /api/todos/:id` 라우트 등록
-  - [ ] `DELETE /api/todos/:id` 라우트 등록
-  - [ ] `PATCH /api/todos/:id/complete` 라우트 등록
-  - [ ] `src/server.js`에 라우터 등록
-  - [ ] Postman/Thunder Client 테스트:
+  - [x] `src/routes/todos.routes.js` 파일 생성
+  - [x] Express Router 생성
+  - [x] 모든 라우트에 authenticate 미들웨어 적용
+  - [x] `GET /api/todos` 라우트 등록
+  - [x] `POST /api/todos` 라우트 등록
+  - [x] `PUT /api/todos/:id` 라우트 등록
+  - [x] `DELETE /api/todos/:id` 라우트 등록
+  - [x] `PATCH /api/todos/:id/complete` 라우트 등록
+  - [x] `src/server.js`에 라우터 등록
+  - [x] Postman/Thunder Client 테스트:
     - 미인증 요청 시 HTTP 401
     - 할일 CRUD 모든 기능 정상 동작
     - 타인의 할일 접근 시 HTTP 403
@@ -476,22 +476,22 @@
 - **의존성**: Task 3.3.4, Task 3.4.4
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] API 엔드포인트 목록 문서화
-  - [ ] 요청/응답 형식 예시 작성
-  - [ ] 에러 코드 정리 (E-001 ~ E-104)
-  - [ ] Postman Collection 파일 생성 (선택)
+  - [x] API 엔드포인트 목록 문서화
+  - [x] 요청/응답 형식 예시 작성
+  - [x] 에러 코드 정리 (E-001 ~ E-104)
+  - [x] Postman Collection 파일 생성 (선택)
 
 #### Task 3.5.2: 통합 테스트 시나리오 실행
 - **설명**: 전체 API 통합 테스트
 - **의존성**: Task 3.5.1
 - **소요 시간**: 30분
 - **완료 조건**:
-  - [ ] 시나리오 1: 회원가입 → 로그인 → 할일 추가 → 조회
-  - [ ] 시나리오 2: 할일 수정 → 완료 처리 → 삭제
-  - [ ] 시나리오 3: 미인증 접근 테스트
-  - [ ] 시나리오 4: 타인의 할일 접근 테스트
-  - [ ] 시나리오 5: 모든 에러 코드 발생 테스트
-  - [ ] 모든 시나리오 통과 확인
+  - [x] 시나리오 1: 회원가입 → 로그인 → 할일 추가 → 조회
+  - [x] 시나리오 2: 할일 수정 → 완료 처리 → 삭제
+  - [x] 시나리오 3: 미인증 접근 테스트
+  - [x] 시나리오 4: 타인의 할일 접근 테스트
+  - [x] 시나리오 5: 모든 에러 코드 발생 테스트
+  - [x] 모든 시나리오 통과 확인
 
 ---
 
