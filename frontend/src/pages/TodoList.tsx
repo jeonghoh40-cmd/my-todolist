@@ -28,8 +28,8 @@ const TodoList: React.FC = () => {
     setError('');
 
     try {
-      const data = await todoAPI.getTodos(token);
-      setTodos(data.todos || []);
+      const todos = await todoAPI.getTodos(token);
+      setTodos(todos || []);
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.code === 'E-101') {
@@ -55,7 +55,7 @@ const TodoList: React.FC = () => {
 
     try {
       const newTodo = await todoAPI.createTodo(token, data);
-      setTodos((prev) => [newTodo.todo, ...prev]);
+      setTodos((prev) => [newTodo, ...prev]);
       setShowAddModal(false);
     } catch (err) {
       if (err instanceof ApiError) {
@@ -72,7 +72,7 @@ const TodoList: React.FC = () => {
     try {
       const updatedTodo = await todoAPI.updateTodo(token, editingTodo.id, data);
       setTodos((prev) =>
-        prev.map((todo) => (todo.id === editingTodo.id ? updatedTodo.todo : todo))
+        prev.map((todo) => (todo.id === editingTodo.id ? updatedTodo : todo))
       );
       setEditingTodo(null);
     } catch (err) {
@@ -106,7 +106,7 @@ const TodoList: React.FC = () => {
     try {
       const updatedTodo = await todoAPI.toggleComplete(token, todoId, isCompleted);
       setTodos((prev) =>
-        prev.map((todo) => (todo.id === todoId ? updatedTodo.todo : todo))
+        prev.map((todo) => (todo.id === todoId ? updatedTodo : todo))
       );
     } catch (err) {
       if (err instanceof ApiError) {
