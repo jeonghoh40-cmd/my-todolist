@@ -4,6 +4,7 @@ import PrivateRoute from './components/PrivateRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import TodoList from './pages/TodoList';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function RootRedirect() {
   const { isAuthenticated } = useAuth();
@@ -22,7 +23,9 @@ function App() {
             path="/todos"
             element={
               <PrivateRoute>
-                <TodoList />
+                <ErrorBoundary>
+                  <TodoList />
+                </ErrorBoundary>
               </PrivateRoute>
             }
           />
