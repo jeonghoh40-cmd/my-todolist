@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import type { Todo } from '../types/todo';
+import { Todo } from '../domain/entities/Todo';
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -11,7 +11,7 @@ interface ConfirmDialogProps {
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, onCancel }) => {
   const { translations } = useLanguage();
-  
+
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

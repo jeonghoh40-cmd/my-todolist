@@ -1,6 +1,6 @@
 import React from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import type { Todo } from '../types/todo';
+import { Todo } from '../domain/entities/Todo';
 
 interface TodoItemProps {
   todo: Todo;
@@ -10,24 +10,23 @@ interface TodoItemProps {
 }
 
 const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete }) => {
-  const isCompleted = todo.is_completed;
   const { translations } = useLanguage();
 
   return (
     <div style={{
-      backgroundColor: isCompleted ? 'var(--surface-completed)' : 'var(--surface)',
+      backgroundColor: todo.isCompleted ? 'var(--surface-completed)' : 'var(--surface)',
       border: '1px solid var(--border-gray)',
       borderRadius: '12px',
       padding: '20px',
       boxShadow: '0 8px 24px rgba(0,0,0,0.5)',
-      opacity: isCompleted ? 0.8 : 1,
+      opacity: todo.isCompleted ? 0.8 : 1,
       transition: 'all 0.3s ease',
     }}>
       <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '12px' }}>
         <input
           type="checkbox"
-          checked={isCompleted}
-          onChange={() => onToggle(todo.id, !isCompleted)}
+          checked={todo.isCompleted}
+          onChange={() => onToggle(todo.id, !todo.isCompleted)}
           style={{
             width: '24px',
             height: '24px',
@@ -42,7 +41,7 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
           color: 'var(--text-primary)',
           margin: 0,
           flex: 1,
-          textDecoration: isCompleted ? 'line-through' : 'none',
+          textDecoration: todo.isCompleted ? 'line-through' : 'none',
           wordBreak: 'break-word',
         }}>
           {todo.title}
@@ -62,14 +61,14 @@ const TodoItem: React.FC<TodoItemProps> = ({ todo, onToggle, onEdit, onDelete })
         </p>
       )}
 
-      {todo.due_date && (
+      {todo.dueDate && (
         <p style={{
           fontSize: '11px',
           color: 'var(--text-secondary)',
           marginBottom: '12px',
           marginLeft: '36px',
         }}>
-          {translations.dueDate}: {new Date(todo.due_date).toLocaleDateString('ko-KR')}
+          {translations.dueDate}: {todo.dueDate.toLocaleDateString('ko-KR')}
         </p>
       )}
 

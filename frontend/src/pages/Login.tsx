@@ -2,12 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { authAPI, ApiError } from '../api/api';
+import { useAuthOperations } from '../hooks/useAuthOperations';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
   const { translations } = useLanguage();
+  const { login: loginUseCase, error: authError, setError } = useAuthOperations();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -23,8 +24,9 @@ const Login: React.FC = () => {
         password: '',
       });
       setErrors({});
+      setError(null);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, setError]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -46,21 +48,19 @@ const Login: React.FC = () => {
 
     setIsLoading(true);
     setErrors({});
+    setError(null);
 
     try {
-      const response = await authAPI.login(formData);
-      login(response.token, response.user);
+      const response = await loginUseCase(formData.username, formData.password);
+      // The useAuthOperations hook already updates the auth context
       navigate('/todos');
     } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.code === 'E-002') {
-          setErrors({ general: translations.invalidCredentials });
-          setFormData((prev) => ({ ...prev, password: '' }));
-        } else {
-          setErrors({ general: error.message });
-        }
+      // Error is handled by the useAuthOperations hook
+      if (authError?.includes('Invalid credentials')) {
+        setErrors({ general: translations.invalidCredentials });
+        setFormData((prev) => ({ ...prev, password: '' }));
       } else {
-        setErrors({ general: translations.serverError });
+        setErrors({ general: authError || translations.serverError });
       }
     } finally {
       setIsLoading(false);

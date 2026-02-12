@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
-import type { Todo } from '../types/todo';
+import { Todo } from '../domain/entities/Todo';
 
 interface TodoFormProps {
   initialData?: Todo | null;
@@ -24,7 +24,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
       setFormData({
         title: initialData.title,
         description: initialData.description || '',
-        due_date: initialData.due_date || '',
+        due_date: initialData.dueDate ? initialData.dueDate.toISOString().split('T')[0] : '',
       });
     }
   }, [initialData]);

@@ -66,6 +66,33 @@ frontend/
     ├── main.tsx              # 애플리케이션 진입점
     ├── App.tsx               # 루트 컴포넌트 (라우팅)
     ├── index.css             # 전역 스타일
+    ├── composition-root.ts   # Clean Architecture 의존성 주입
+    │
+    ├── domain/               # 도메인 계층 (엔티티 및 인터페이스)
+    │   ├── entities/         # 엔티티 정의
+    │   │   ├── Todo.ts       # 할일 엔티티
+    │   │   └── User.ts       # 사용자 엔티티
+    │   └── repositories/     # 리포지토리 인터페이스
+    │       ├── ITodoRepository.ts
+    │       └── IAuthRepository.ts
+    │
+    ├── application/          # 애플리케이션 계층 (유스케이스)
+    │   ├── usecases/         # 유스케이스 정의
+    │   │   ├── TodoUseCases.ts
+    │   │   └── AuthUseCases.ts
+    │   └── dtos/             # 데이터 전송 객체
+    │       ├── TodoDTO.ts
+    │       └── AuthDTO.ts
+    │
+    ├── infrastructure/       # 인프라 계층 (외부 서비스 구현)
+    │   ├── repositories/     # 리포지토리 구현
+    │   │   ├── TodoRepositoryImpl.ts
+    │   │   └── AuthRepositoryImpl.ts
+    │   └── services/         # 외부 서비스 구현
+    │
+    ├── hooks/                # 커스텀 훅
+    │   ├── useTodos.ts       # 할일 관련 훅
+    │   └── useAuthOperations.ts # 인증 관련 훅
     │
     ├── api/
     │   └── api.ts            # API 통신 유틸리티

@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useTheme } from '../contexts/ThemeContext';
 import { useLanguage } from '../contexts/LanguageContext';
-import { todoAPI, ApiError } from '../api/api';
-import type { Todo } from '../types/todo';
+import { useTodos } from '../hooks/useTodos';
+import { Todo } from '../domain/entities/Todo';
 import TodoItem from '../components/TodoItem';
 import TodoForm from '../components/TodoForm';
 import ConfirmDialog from '../components/ConfirmDialog';
@@ -13,112 +13,59 @@ import LanguageSelector from '../components/LanguageSelector';
 
 const TodoList: React.FC = () => {
   const navigate = useNavigate();
-  const { user, logout, token } = useAuth();
+  const { user, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { translations } = useLanguage();
-  const [todos, setTodos] = useState<Todo[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingTodo, setEditingTodo] = useState<Todo | null>(null);
   const [deletingTodo, setDeletingTodo] = useState<Todo | null>(null);
 
-  const loadTodos = useCallback(async () => {
-    if (!token) {
-      navigate('/login');
-      return;
-    }
-
-    setIsLoading(true);
-    setError('');
-
-    try {
-      const todos = await todoAPI.getTodos(token);
-      setTodos(todos || []);
-    } catch (err) {
-      if (err instanceof ApiError) {
-        if (err.code === 'E-101') {
-          logout();
-          navigate('/login');
-        } else {
-          setError(err.message);
-        }
-      } else {
-        setError(translations.todoLoadError);
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token, navigate, logout]);
-
-  useEffect(() => {
-    loadTodos();
-  }, [loadTodos]);
+  const {
+    todos,
+    isLoading,
+    error,
+    addTodo,
+    updateTodo,
+    removeTodo,
+    toggleCompletion
+  } = useTodos();
 
   const handleAddTodo = async (data: { title: string; description?: string; due_date?: string }) => {
-    if (!token) return;
-
     try {
-      const newTodo = await todoAPI.createTodo(token, data);
-      setTodos((prev) => [newTodo, ...prev]);
+      await addTodo(data.title, data.description, data.due_date ? new Date(data.due_date) : undefined);
       setShowAddModal(false);
     } catch (err) {
-      if (err instanceof ApiError) {
-        alert(err.message);
-      } else {
-        alert(translations.todoAddError || '할일 추가에 실패했습니다');
-      }
+      alert(error || translations.todoAddError || '할일 추가에 실패했습니다');
     }
   };
 
   const handleUpdateTodo = async (data: { title: string; description?: string; due_date?: string }) => {
-    if (!token || !editingTodo) return;
+    if (!editingTodo) return;
 
     try {
-      const updatedTodo = await todoAPI.updateTodo(token, editingTodo.id, data);
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === editingTodo.id ? updatedTodo : todo))
-      );
+      await updateTodo(editingTodo.id, data.title, data.description, data.due_date ? new Date(data.due_date) : undefined);
       setEditingTodo(null);
     } catch (err) {
-      if (err instanceof ApiError) {
-        alert(err.message);
-      } else {
-        alert(translations.todoUpdateError);
-      }
+      alert(error || translations.todoUpdateError);
     }
   };
 
   const handleDeleteTodo = async () => {
-    if (!token || !deletingTodo) return;
+    if (!deletingTodo) return;
 
     try {
-      await todoAPI.deleteTodo(token, deletingTodo.id);
-      setTodos((prev) => prev.filter((todo) => todo.id !== deletingTodo.id));
+      await removeTodo(deletingTodo.id);
       setDeletingTodo(null);
     } catch (err) {
-      if (err instanceof ApiError) {
-        alert(err.message);
-      } else {
-        alert(translations.todoDeleteError);
-      }
+      alert(error || translations.todoDeleteError);
     }
   };
 
   const handleToggleTodo = async (todoId: number, isCompleted: boolean) => {
-    if (!token) return;
-
     try {
-      const updatedTodo = await todoAPI.toggleComplete(token, todoId, isCompleted);
-      setTodos((prev) =>
-        prev.map((todo) => (todo.id === todoId ? updatedTodo : todo))
-      );
+      await toggleCompletion(todoId);
     } catch (err) {
-      if (err instanceof ApiError) {
-        alert(err.message);
-      } else {
-        alert(translations.todoToggleError);
-      }
+      alert(error || translations.todoToggleError);
     }
   };
 

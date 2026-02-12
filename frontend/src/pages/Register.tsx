@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { authAPI, ApiError } from '../api/api';
+import { useAuthOperations } from '../hooks/useAuthOperations';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
   const { translations } = useLanguage();
+  const { register: registerUseCase, error: authError, setError } = useAuthOperations();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -44,22 +45,20 @@ const Register: React.FC = () => {
 
     setIsLoading(true);
     setErrors({});
+    setError(null);
 
     try {
-      await authAPI.register(formData);
+      await registerUseCase(formData.username, formData.password, formData.email);
       alert(translations.register + ' ' + translations.success);
       navigate('/login');
     } catch (error) {
-      if (error instanceof ApiError) {
-        if (error.code === 'E-001') {
-          setErrors({ username: translations.usernameTaken });
-        } else if (error.code === 'E-003') {
-          setErrors({ email: translations.invalidEmail });
-        } else {
-          setErrors({ general: error.message });
-        }
+      // Error is handled by the useAuthOperations hook
+      if (authError?.includes('already exists')) {
+        setErrors({ username: translations.usernameTaken });
+      } else if (authError?.includes('Invalid email')) {
+        setErrors({ email: translations.invalidEmail });
       } else {
-        setErrors({ general: translations.serverError });
+        setErrors({ general: authError || translations.serverError });
       }
     } finally {
       setIsLoading(false);
