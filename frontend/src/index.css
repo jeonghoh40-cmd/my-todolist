@@ -22,6 +22,7 @@
   --bg-white: #ffffff;
   --bg-gray: #f1f3f4;
   --surface: #ffffff;
+  --surface-completed: #f8f9fa;
 
   --border-light: #dadce0;
   --border-gray: #80868b;
@@ -50,11 +51,12 @@
   --warning-orange-light: #3d3520;
 
   --bg-white: #202124;
-  --bg-gray: #292a2d;
-  --surface: #303134;
+  --bg-gray: #1a1a1a;
+  --surface: #2e2e2e;
+  --surface-completed: #272727;
 
   --border-light: #5f6368;
-  --border-gray: #9aa0a6;
+  --border-gray: #555555;
 
   --text-primary: #e8eaed;
   --text-secondary: #9aa0a6;

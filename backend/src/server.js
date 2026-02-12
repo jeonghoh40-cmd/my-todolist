@@ -1,5 +1,7 @@
 const express = require('express');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDoc = require('../../swagger/swagger.json');
 require('dotenv').config();
 
 const { testConnection } = require('./db/connection');
@@ -7,11 +9,14 @@ const authRoutes = require('./routes/auth.routes');
 const todosRoutes = require('./routes/todos.routes');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true
+}));
 
 app.get('/api/health', (req, res) => {
   res.json({
@@ -20,6 +25,9 @@ app.get('/api/health', (req, res) => {
     environment: process.env.NODE_ENV,
   });
 });
+
+// Swagger UI
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDoc));
 
 // 인증 라우터 등록
 app.use('/api/auth', authRoutes);
