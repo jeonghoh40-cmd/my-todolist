@@ -33,6 +33,36 @@
   --overlay-dark: rgba(0, 0, 0, 0.5);
 }
 
+/* Dark Mode */
+[data-theme="dark"] {
+  --primary-blue: #8ab4f8;
+  --primary-blue-hover: #aecbfa;
+  --primary-blue-active: #c2d9fc;
+  --primary-blue-light: #1e3a5f;
+
+  --success-green: #81c995;
+  --success-green-light: #1e3a2a;
+
+  --danger-red: #f28b82;
+  --danger-red-light: #3d2520;
+
+  --warning-orange: #fdd663;
+  --warning-orange-light: #3d3520;
+
+  --bg-white: #202124;
+  --bg-gray: #292a2d;
+  --surface: #303134;
+
+  --border-light: #5f6368;
+  --border-gray: #9aa0a6;
+
+  --text-primary: #e8eaed;
+  --text-secondary: #9aa0a6;
+  --text-disabled: #5f6368;
+
+  --overlay-dark: rgba(0, 0, 0, 0.7);
+}
+
 body {
   font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--bg-gray);

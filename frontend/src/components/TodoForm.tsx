@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import type { Todo } from '../types/todo';
 
 interface TodoFormProps {
@@ -8,6 +9,7 @@ interface TodoFormProps {
 }
 
 const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) => {
+  const { translations } = useLanguage();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
@@ -31,7 +33,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
     e.preventDefault();
 
     if (!formData.title.trim()) {
-      setError('할일 제목은 필수 항목입니다');
+      setError(translations.titleRequired);
       return;
     }
 
@@ -68,7 +70,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'var(--overlay-dark)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -79,13 +81,13 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
       <div style={{
         width: '100%',
         maxWidth: '500px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--surface)',
         borderRadius: '12px',
         boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
         overflow: 'hidden',
       }}>
         <div style={{
-          backgroundColor: '#1a73e8',
+          backgroundColor: 'var(--primary-blue)',
           color: '#ffffff',
           padding: '16px 24px',
           display: 'flex',
@@ -93,7 +95,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
           alignItems: 'center',
         }}>
           <h2 style={{ fontSize: '20px', fontWeight: '500', margin: 0 }}>
-            {initialData ? '할일 수정' : '할일 추가'}
+            {initialData ? translations.edit + ' ' + translations.todo : translations.addTodo}
           </h2>
           <button
             onClick={onCancel}
@@ -113,8 +115,8 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
           {error && (
             <div style={{
               padding: '12px',
-              backgroundColor: '#fce8e6',
-              color: '#d93025',
+              backgroundColor: 'var(--danger-red-light)',
+              color: 'var(--danger-red)',
               borderRadius: '4px',
               marginBottom: '16px',
               fontSize: '14px',
@@ -127,11 +129,11 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
             <label style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              제목 <span style={{ color: '#d93025' }}>*</span>
+              {translations.title} <span style={{ color: 'var(--danger-red)' }}>*</span>
             </label>
             <input
               type="text"
@@ -144,10 +146,12 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: '1px solid #dadce0',
+                border: '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               autoFocus
             />
@@ -157,11 +161,11 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
             <label style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              설명
+              {translations.descriptionLabel}
             </label>
             <textarea
               value={formData.description}
@@ -170,12 +174,14 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
                 width: '100%',
                 minHeight: '120px',
                 padding: '12px',
-                border: '1px solid #dadce0',
+                border: '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
                 resize: 'vertical',
                 fontFamily: 'inherit',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
             />
           </div>
@@ -184,11 +190,11 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
             <label style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              마감일
+              {translations.dueDate}
             </label>
             <input
               type="date"
@@ -198,10 +204,12 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: '1px solid #dadce0',
+                border: '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
             />
           </div>
@@ -216,22 +224,22 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
               onClick={onCancel}
               style={{
                 padding: '12px 24px',
-                backgroundColor: '#ffffff',
-                color: '#5f6368',
-                border: '1px solid #dadce0',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 fontWeight: '500',
                 cursor: 'pointer',
               }}
             >
-              취소
+              {translations.cancel}
             </button>
             <button
               type="submit"
               style={{
                 padding: '12px 24px',
-                backgroundColor: '#1a73e8',
+                backgroundColor: 'var(--primary-blue)',
                 color: '#ffffff',
                 border: 'none',
                 borderRadius: '4px',
@@ -240,7 +248,7 @@ const TodoForm: React.FC<TodoFormProps> = ({ initialData, onSubmit, onCancel }) 
                 cursor: 'pointer',
               }}
             >
-              저장
+              {translations.save}
             </button>
           </div>
         </form>

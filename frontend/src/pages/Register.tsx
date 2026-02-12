@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../contexts/LanguageContext';
 import { authAPI, ApiError } from '../api/api';
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
+  const { translations } = useLanguage();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -16,17 +18,17 @@ const Register: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = '사용자명을 입력해주세요';
+      newErrors.username = `${translations.username}${translations.requiredField}`;
     }
 
     if (!formData.password.trim()) {
-      newErrors.password = '비밀번호를 입력해주세요';
+      newErrors.password = `${translations.password}${translations.requiredField}`;
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = '이메일을 입력해주세요';
+      newErrors.email = `${translations.email}${translations.requiredField}`;
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = '올바른 이메일 형식이 아닙니다';
+      newErrors.email = translations.invalidEmail;
     }
 
     setErrors(newErrors);
@@ -45,19 +47,19 @@ const Register: React.FC = () => {
 
     try {
       await authAPI.register(formData);
-      alert('회원가입 성공!');
+      alert(translations.register + ' ' + translations.success);
       navigate('/login');
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.code === 'E-001') {
-          setErrors({ username: '이미 존재하는 사용자명입니다' });
+          setErrors({ username: translations.usernameTaken });
         } else if (error.code === 'E-003') {
-          setErrors({ email: '올바른 이메일 형식이 아닙니다' });
+          setErrors({ email: translations.invalidEmail });
         } else {
           setErrors({ general: error.message });
         }
       } else {
-        setErrors({ general: '서버 오류가 발생했습니다' });
+        setErrors({ general: translations.serverError });
       }
     } finally {
       setIsLoading(false);
@@ -79,11 +81,12 @@ const Register: React.FC = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px',
+      backgroundColor: 'var(--bg-gray)',
     }}>
       <div style={{
         width: '100%',
         maxWidth: '400px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--surface)',
         borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         padding: '32px',
@@ -91,35 +94,35 @@ const Register: React.FC = () => {
         <h1 style={{
           fontSize: '28px',
           fontWeight: '600',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '8px',
           textAlign: 'center',
         }}>
-          my-todolist
+          {translations.appName}
         </h1>
         <p style={{
           fontSize: '14px',
-          color: '#5f6368',
+          color: 'var(--text-secondary)',
           marginBottom: '32px',
           textAlign: 'center',
         }}>
-          간편한 할일 관리 서비스
+          {translations.description}
         </p>
 
         <h2 style={{
           fontSize: '22px',
           fontWeight: '500',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '24px',
         }}>
-          회원가입
+          {translations.registerPage}
         </h2>
 
         {errors.general && (
           <div style={{
             padding: '12px',
-            backgroundColor: '#fce8e6',
-            color: '#d93025',
+            backgroundColor: 'var(--danger-red-light)',
+            color: 'var(--danger-red)',
             borderRadius: '4px',
             marginBottom: '16px',
             fontSize: '14px',
@@ -133,11 +136,11 @@ const Register: React.FC = () => {
             <label htmlFor="username" style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              Username
+              {translations.username}
             </label>
             <input
               type="text"
@@ -149,24 +152,26 @@ const Register: React.FC = () => {
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: errors.username ? '2px solid #d93025' : '1px solid #dadce0',
+                border: errors.username ? '2px solid var(--danger-red)' : '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               onFocus={(e) => {
                 if (!errors.username) {
-                  e.target.style.border = '2px solid #1a73e8';
+                  e.target.style.border = '2px solid var(--primary-blue)';
                 }
               }}
               onBlur={(e) => {
                 if (!errors.username) {
-                  e.target.style.border = '1px solid #dadce0';
+                  e.target.style.border = '1px solid var(--border-light)';
                 }
               }}
             />
             {errors.username && (
-              <p style={{ color: '#d93025', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--danger-red)', fontSize: '12px', marginTop: '4px' }}>
                 {errors.username}
               </p>
             )}
@@ -176,11 +181,11 @@ const Register: React.FC = () => {
             <label htmlFor="password" style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              Password
+              {translations.password}
             </label>
             <input
               type="password"
@@ -192,24 +197,26 @@ const Register: React.FC = () => {
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: errors.password ? '2px solid #d93025' : '1px solid #dadce0',
+                border: errors.password ? '2px solid var(--danger-red)' : '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               onFocus={(e) => {
                 if (!errors.password) {
-                  e.target.style.border = '2px solid #1a73e8';
+                  e.target.style.border = '2px solid var(--primary-blue)';
                 }
               }}
               onBlur={(e) => {
                 if (!errors.password) {
-                  e.target.style.border = '1px solid #dadce0';
+                  e.target.style.border = '1px solid var(--border-light)';
                 }
               }}
             />
             {errors.password && (
-              <p style={{ color: '#d93025', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--danger-red)', fontSize: '12px', marginTop: '4px' }}>
                 {errors.password}
               </p>
             )}
@@ -219,11 +226,11 @@ const Register: React.FC = () => {
             <label htmlFor="email" style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              Email
+              {translations.email}
             </label>
             <input
               type="email"
@@ -235,24 +242,26 @@ const Register: React.FC = () => {
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: errors.email ? '2px solid #d93025' : '1px solid #dadce0',
+                border: errors.email ? '2px solid var(--danger-red)' : '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               onFocus={(e) => {
                 if (!errors.email) {
-                  e.target.style.border = '2px solid #1a73e8';
+                  e.target.style.border = '2px solid var(--primary-blue)';
                 }
               }}
               onBlur={(e) => {
                 if (!errors.email) {
-                  e.target.style.border = '1px solid #dadce0';
+                  e.target.style.border = '1px solid var(--border-light)';
                 }
               }}
             />
             {errors.email && (
-              <p style={{ color: '#d93025', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--danger-red)', fontSize: '12px', marginTop: '4px' }}>
                 {errors.email}
               </p>
             )}
@@ -264,7 +273,7 @@ const Register: React.FC = () => {
             style={{
               width: '100%',
               height: '52px',
-              backgroundColor: isLoading ? '#9aa0a6' : '#1a73e8',
+              backgroundColor: isLoading ? 'var(--text-disabled)' : 'var(--primary-blue)',
               color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
@@ -274,21 +283,21 @@ const Register: React.FC = () => {
               marginBottom: '16px',
             }}
           >
-            {isLoading ? '처리 중...' : '회원가입'}
+            {isLoading ? translations.loading : translations.register}
           </button>
 
           <p style={{
             textAlign: 'center',
             fontSize: '14px',
-            color: '#5f6368',
+            color: 'var(--text-secondary)',
           }}>
-            이미 계정이 있으신가요?{' '}
+            {translations.loginPage}?{' '}
             <Link to="/login" style={{
-              color: '#1a73e8',
+              color: 'var(--primary-blue)',
               textDecoration: 'none',
               fontWeight: '500',
             }}>
-              로그인
+              {translations.login}
             </Link>
           </p>
         </form>

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { authAPI, ApiError } from '../api/api';
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const { login, isAuthenticated } = useAuth();
+  const { translations } = useLanguage();
   const [formData, setFormData] = useState({
     username: '',
     password: '',
@@ -30,11 +32,11 @@ const Login: React.FC = () => {
     const newErrors: { [key: string]: string } = {};
 
     if (!formData.username.trim()) {
-      newErrors.username = '사용자명을 입력해주세요';
+      newErrors.username = `${translations.username}${translations.requiredField}`;
     }
 
     if (!formData.password.trim()) {
-      newErrors.password = '비밀번호를 입력해주세요';
+      newErrors.password = `${translations.password}${translations.requiredField}`;
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -52,13 +54,13 @@ const Login: React.FC = () => {
     } catch (error) {
       if (error instanceof ApiError) {
         if (error.code === 'E-002') {
-          setErrors({ general: '아이디 또는 비밀번호가 일치하지 않습니다' });
+          setErrors({ general: translations.invalidCredentials });
           setFormData((prev) => ({ ...prev, password: '' }));
         } else {
           setErrors({ general: error.message });
         }
       } else {
-        setErrors({ general: '서버 오류가 발생했습니다' });
+        setErrors({ general: translations.serverError });
       }
     } finally {
       setIsLoading(false);
@@ -80,11 +82,12 @@ const Login: React.FC = () => {
       alignItems: 'center',
       justifyContent: 'center',
       padding: '20px',
+      backgroundColor: 'var(--bg-gray)',
     }}>
       <div style={{
         width: '100%',
         maxWidth: '400px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--surface)',
         borderRadius: '8px',
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         padding: '32px',
@@ -92,35 +95,35 @@ const Login: React.FC = () => {
         <h1 style={{
           fontSize: '28px',
           fontWeight: '600',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '8px',
           textAlign: 'center',
         }}>
-          my-todolist
+          {translations.appName}
         </h1>
         <p style={{
           fontSize: '14px',
-          color: '#5f6368',
+          color: 'var(--text-secondary)',
           marginBottom: '32px',
           textAlign: 'center',
         }}>
-          간편한 할일 관리 서비스
+          {translations.description}
         </p>
 
         <h2 style={{
           fontSize: '22px',
           fontWeight: '500',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '24px',
         }}>
-          로그인
+          {translations.loginPage}
         </h2>
 
         {errors.general && (
           <div style={{
             padding: '12px',
-            backgroundColor: '#fce8e6',
-            color: '#d93025',
+            backgroundColor: 'var(--danger-red-light)',
+            color: 'var(--danger-red)',
             borderRadius: '4px',
             marginBottom: '16px',
             fontSize: '14px',
@@ -134,11 +137,11 @@ const Login: React.FC = () => {
             <label htmlFor="username" style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              Username
+              {translations.username}
             </label>
             <input
               type="text"
@@ -150,24 +153,26 @@ const Login: React.FC = () => {
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: errors.username ? '2px solid #d93025' : '1px solid #dadce0',
+                border: errors.username ? '2px solid var(--danger-red)' : '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               onFocus={(e) => {
                 if (!errors.username) {
-                  e.target.style.border = '2px solid #1a73e8';
+                  e.target.style.border = '2px solid var(--primary-blue)';
                 }
               }}
               onBlur={(e) => {
                 if (!errors.username) {
-                  e.target.style.border = '1px solid #dadce0';
+                  e.target.style.border = '1px solid var(--border-light)';
                 }
               }}
             />
             {errors.username && (
-              <p style={{ color: '#d93025', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--danger-red)', fontSize: '12px', marginTop: '4px' }}>
                 {errors.username}
               </p>
             )}
@@ -177,11 +182,11 @@ const Login: React.FC = () => {
             <label htmlFor="password" style={{
               display: 'block',
               fontSize: '14px',
-              color: '#202124',
+              color: 'var(--text-primary)',
               marginBottom: '6px',
               fontWeight: '500',
             }}>
-              Password
+              {translations.password}
             </label>
             <input
               type="password"
@@ -193,24 +198,26 @@ const Login: React.FC = () => {
                 width: '100%',
                 height: '48px',
                 padding: '0 12px',
-                border: errors.password ? '2px solid #d93025' : '1px solid #dadce0',
+                border: errors.password ? '2px solid var(--danger-red)' : '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '16px',
                 outline: 'none',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-primary)',
               }}
               onFocus={(e) => {
                 if (!errors.password) {
-                  e.target.style.border = '2px solid #1a73e8';
+                  e.target.style.border = '2px solid var(--primary-blue)';
                 }
               }}
               onBlur={(e) => {
                 if (!errors.password) {
-                  e.target.style.border = '1px solid #dadce0';
+                  e.target.style.border = '1px solid var(--border-light)';
                 }
               }}
             />
             {errors.password && (
-              <p style={{ color: '#d93025', fontSize: '12px', marginTop: '4px' }}>
+              <p style={{ color: 'var(--danger-red)', fontSize: '12px', marginTop: '4px' }}>
                 {errors.password}
               </p>
             )}
@@ -222,7 +229,7 @@ const Login: React.FC = () => {
             style={{
               width: '100%',
               height: '52px',
-              backgroundColor: isLoading ? '#9aa0a6' : '#1a73e8',
+              backgroundColor: isLoading ? 'var(--text-disabled)' : 'var(--primary-blue)',
               color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
@@ -232,21 +239,21 @@ const Login: React.FC = () => {
               marginBottom: '16px',
             }}
           >
-            {isLoading ? '처리 중...' : '로그인'}
+            {isLoading ? translations.loading : translations.login}
           </button>
 
           <p style={{
             textAlign: 'center',
             fontSize: '14px',
-            color: '#5f6368',
+            color: 'var(--text-secondary)',
           }}>
-            계정이 없으신가요?{' '}
+            {translations.registerPage}?{' '}
             <Link to="/register" style={{
-              color: '#1a73e8',
+              color: 'var(--primary-blue)',
               textDecoration: 'none',
               fontWeight: '500',
             }}>
-              회원가입
+              {translations.register}
             </Link>
           </p>
         </form>

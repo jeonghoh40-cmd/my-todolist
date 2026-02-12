@@ -1,6 +1,9 @@
 import React from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 
 const LoadingSpinner: React.FC = () => {
+  const { translations } = useLanguage();
+  
   return (
     <div style={{
       display: 'flex',
@@ -12,17 +15,17 @@ const LoadingSpinner: React.FC = () => {
       <div style={{
         width: '32px',
         height: '32px',
-        border: '3px solid #e8f0fe',
-        borderTop: '3px solid #1a73e8',
+        border: '3px solid var(--primary-blue-light)',
+        borderTop: '3px solid var(--primary-blue)',
         borderRadius: '50%',
         animation: 'spin 1s linear infinite',
       }} />
       <p style={{
         marginTop: '16px',
         fontSize: '14px',
-        color: '#5f6368',
+        color: 'var(--text-secondary)',
       }}>
-        로딩 중...
+        {translations.loading}
       </p>
 
       <style>{`

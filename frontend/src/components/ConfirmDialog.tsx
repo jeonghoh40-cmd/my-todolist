@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useLanguage } from '../contexts/LanguageContext';
 import type { Todo } from '../types/todo';
 
 interface ConfirmDialogProps {
@@ -9,6 +10,8 @@ interface ConfirmDialogProps {
 }
 
 const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, onCancel }) => {
+  const { translations } = useLanguage();
+  
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -40,7 +43,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: 'rgba(0,0,0,0.5)',
+        backgroundColor: 'var(--overlay-dark)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -51,7 +54,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
       <div style={{
         width: '100%',
         maxWidth: '360px',
-        backgroundColor: '#ffffff',
+        backgroundColor: 'var(--surface)',
         borderRadius: '8px',
         boxShadow: '0 8px 24px rgba(0,0,0,0.2)',
         padding: '24px',
@@ -59,16 +62,16 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
         <h2 style={{
           fontSize: '18px',
           fontWeight: '500',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '16px',
           textAlign: 'center',
         }}>
-          정말 삭제하시겠습니까?
+          {translations.deleteConfirmation}
         </h2>
 
         <p style={{
           fontSize: '16px',
-          color: '#202124',
+          color: 'var(--text-primary)',
           marginBottom: '8px',
           textAlign: 'center',
           fontWeight: '500',
@@ -78,11 +81,11 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
 
         <p style={{
           fontSize: '14px',
-          color: '#5f6368',
+          color: 'var(--text-secondary)',
           marginBottom: '24px',
           textAlign: 'center',
         }}>
-          이 작업은 취소할 수 없습니다.
+          {translations.cannotUndo}
         </p>
 
         <div style={{
@@ -94,22 +97,22 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
             onClick={onCancel}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#ffffff',
-              color: '#5f6368',
-              border: '1px solid #dadce0',
+              backgroundColor: 'var(--bg-white)',
+              color: 'var(--text-secondary)',
+              border: '1px solid var(--border-light)',
               borderRadius: '4px',
               fontSize: '16px',
               fontWeight: '500',
               cursor: 'pointer',
             }}
           >
-            취소
+            {translations.cancel}
           </button>
           <button
             onClick={onConfirm}
             style={{
               padding: '12px 24px',
-              backgroundColor: '#d93025',
+              backgroundColor: 'var(--danger-red)',
               color: '#ffffff',
               border: 'none',
               borderRadius: '4px',
@@ -118,7 +121,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({ isOpen, todo, onConfirm, 
               cursor: 'pointer',
             }}
           >
-            삭제
+            {translations.delete}
           </button>
         </div>
       </div>

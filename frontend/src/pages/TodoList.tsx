@@ -1,16 +1,21 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { useTheme } from '../contexts/ThemeContext';
+import { useLanguage } from '../contexts/LanguageContext';
 import { todoAPI, ApiError } from '../api/api';
 import type { Todo } from '../types/todo';
 import TodoItem from '../components/TodoItem';
 import TodoForm from '../components/TodoForm';
 import ConfirmDialog from '../components/ConfirmDialog';
 import LoadingSpinner from '../components/LoadingSpinner';
+import LanguageSelector from '../components/LanguageSelector';
 
 const TodoList: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout, token } = useAuth();
+  const { theme, toggleTheme } = useTheme();
+  const { translations } = useLanguage();
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState('');
@@ -39,7 +44,7 @@ const TodoList: React.FC = () => {
           setError(err.message);
         }
       } else {
-        setError('할일 목록을 불러오는 데 실패했습니다');
+        setError(translations.todoLoadError);
       }
     } finally {
       setIsLoading(false);
@@ -61,7 +66,7 @@ const TodoList: React.FC = () => {
       if (err instanceof ApiError) {
         alert(err.message);
       } else {
-        alert('할일 추가에 실패했습니다');
+        alert(translations.todoAddError || '할일 추가에 실패했습니다');
       }
     }
   };
@@ -79,7 +84,7 @@ const TodoList: React.FC = () => {
       if (err instanceof ApiError) {
         alert(err.message);
       } else {
-        alert('할일 수정에 실패했습니다');
+        alert(translations.todoUpdateError);
       }
     }
   };
@@ -95,7 +100,7 @@ const TodoList: React.FC = () => {
       if (err instanceof ApiError) {
         alert(err.message);
       } else {
-        alert('할일 삭제에 실패했습니다');
+        alert(translations.todoDeleteError);
       }
     }
   };
@@ -112,7 +117,7 @@ const TodoList: React.FC = () => {
       if (err instanceof ApiError) {
         alert(err.message);
       } else {
-        alert('할일 상태 변경에 실패했습니다');
+        alert(translations.todoToggleError);
       }
     }
   };
@@ -123,10 +128,10 @@ const TodoList: React.FC = () => {
   };
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f1f3f4' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: 'var(--bg-gray)' }}>
       <header style={{
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #dadce0',
+        backgroundColor: 'var(--bg-white)',
+        borderBottom: '1px solid var(--border-light)',
         padding: '16px 24px',
         position: 'sticky',
         top: 0,
@@ -143,29 +148,45 @@ const TodoList: React.FC = () => {
           <h1 style={{
             fontSize: '24px',
             fontWeight: '500',
-            color: '#202124',
+            color: 'var(--text-primary)',
             margin: 0,
           }}>
-            나의 할일 목록
+            {translations.myTodos}
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ fontSize: '14px', color: '#5f6368' }}>
-              {user?.username}님
+            <span style={{ fontSize: '14px', color: 'var(--text-secondary)' }}>
+              {user?.username}{translations.hello}
             </span>
+            <LanguageSelector />
+            <button
+              onClick={toggleTheme}
+              style={{
+                padding: '8px 12px',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-light)',
+                borderRadius: '4px',
+                fontSize: '20px',
+                cursor: 'pointer',
+              }}
+              title={theme === 'light' ? '다크 모드로 전환' : '라이트 모드로 전환'}
+            >
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
             <button
               onClick={handleLogout}
               style={{
                 padding: '8px 16px',
-                backgroundColor: '#ffffff',
-                color: '#5f6368',
-                border: '1px solid #dadce0',
+                backgroundColor: 'var(--bg-white)',
+                color: 'var(--text-secondary)',
+                border: '1px solid var(--border-light)',
                 borderRadius: '4px',
                 fontSize: '14px',
                 fontWeight: '500',
                 cursor: 'pointer',
               }}
             >
-              로그아웃
+              {translations.logout}
             </button>
           </div>
         </div>
@@ -179,8 +200,8 @@ const TodoList: React.FC = () => {
         {error && (
           <div style={{
             padding: '12px',
-            backgroundColor: '#fce8e6',
-            color: '#d93025',
+            backgroundColor: 'var(--danger-red-light)',
+            color: 'var(--danger-red)',
             borderRadius: '4px',
             marginBottom: '16px',
             fontSize: '14px',
@@ -194,7 +215,7 @@ const TodoList: React.FC = () => {
           style={{
             width: '100%',
             padding: '16px',
-            backgroundColor: '#1a73e8',
+            backgroundColor: 'var(--primary-blue)',
             color: '#ffffff',
             border: 'none',
             borderRadius: '8px',
@@ -209,7 +230,7 @@ const TodoList: React.FC = () => {
           }}
         >
           <span style={{ fontSize: '20px' }}>+</span>
-          할일 추가
+          {translations.addTodo}
         </button>
 
         {isLoading ? (
@@ -218,11 +239,11 @@ const TodoList: React.FC = () => {
           <div style={{
             textAlign: 'center',
             padding: '60px 20px',
-            color: '#5f6368',
+            color: 'var(--text-secondary)',
           }}>
             <div style={{ fontSize: '48px', marginBottom: '16px' }}>📝</div>
-            <p style={{ fontSize: '16px', marginBottom: '8px' }}>할일이 없습니다.</p>
-            <p style={{ fontSize: '14px' }}>새로운 할일을 추가해보세요!</p>
+            <p style={{ fontSize: '16px', marginBottom: '8px' }}>{translations.noTodos}</p>
+            <p style={{ fontSize: '14px' }}>{translations.addNewTodo}</p>
           </div>
         ) : (
           <div style={{
