@@ -1,11 +1,11 @@
 import { TodoRepositoryImpl } from './infrastructure/repositories/TodoRepositoryImpl';
 import { AuthRepositoryImpl } from './infrastructure/repositories/AuthRepositoryImpl';
-import { 
-  GetTodosUseCase, 
-  CreateTodoUseCase, 
-  UpdateTodoUseCase, 
-  DeleteTodoUseCase, 
-  ToggleTodoCompletionUseCase 
+import {
+  GetTodosUseCase,
+  CreateTodoUseCase,
+  UpdateTodoUseCase,
+  DeleteTodoUseCase,
+  ToggleTodoCompletionUseCase
 } from './application/usecases/TodoUseCases';
 import { RegisterUseCase, LoginUseCase } from './application/usecases/AuthUseCases';
 
