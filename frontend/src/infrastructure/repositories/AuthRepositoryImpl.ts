@@ -1,7 +1,7 @@
 import { User } from '../../domain/entities/User';
 import { authAPI } from '../../api/api';
 
-// Define the interface type for reference but don't implement it directly to avoid runtime issues
+// Define the interface type for reference
 interface IAuthRepository {
   register(username: string, password: string, email: string): Promise<{ user: User; token: string }>;
   login(username: string, password: string): Promise<{ user: User; token: string }>;

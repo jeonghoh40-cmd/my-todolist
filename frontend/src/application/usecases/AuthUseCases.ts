@@ -1,5 +1,16 @@
 import { User } from '../../domain/entities/User';
-import { RegisterDTO, LoginDTO } from '../dtos/AuthDTO';
+
+// Define DTO interfaces locally since they're compile-time constructs
+interface RegisterDTO {
+  username: string;
+  password: string;
+  email: string;
+}
+
+interface LoginDTO {
+  username: string;
+  password: string;
+}
 
 // Define interface for type checking
 interface IAuthRepository {

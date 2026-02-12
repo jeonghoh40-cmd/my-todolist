@@ -1,7 +1,7 @@
 import { Todo } from '../../domain/entities/Todo';
 import { todoAPI } from '../../api/api';
 
-// Define the interface type for reference but don't implement it directly to avoid runtime issues
+// Define the interface type for reference
 interface ITodoRepository {
   getTodos(token: string): Promise<Todo[]>;
   createTodo(token: string, todo: Omit<Todo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>): Promise<Todo>;

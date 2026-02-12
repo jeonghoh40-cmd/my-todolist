@@ -1,5 +1,18 @@
 import { Todo } from '../../domain/entities/Todo';
-import { CreateTodoDTO, UpdateTodoDTO } from '../dtos/TodoDTO';
+
+// Define DTO interfaces locally since they're compile-time constructs
+interface CreateTodoDTO {
+  title: string;
+  description?: string;
+  dueDate?: Date;
+}
+
+interface UpdateTodoDTO {
+  title?: string;
+  description?: string;
+  dueDate?: Date;
+  isCompleted?: boolean;
+}
 
 // Define interfaces for type checking
 interface ITodoRepository {
@@ -33,7 +46,7 @@ export interface IToggleTodoCompletionUseCase {
 export class GetTodosUseCase {
   constructor(private todoRepository: ITodoRepository) {}
 
-  execute: (token: string, userId: number) => Promise<Todo[]> = 
+  execute: (token: string, userId: number) => Promise<Todo[]> =
     async (token: string, userId: number): Promise<Todo[]> => {
       // In a real implementation, we might want to validate that the user
       // can only get their own todos, but the backend handles this
