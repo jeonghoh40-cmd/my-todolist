@@ -19,10 +19,10 @@ export const useAuthOperations = (): UseAuthOperationsReturn => {
     setError(null);
     try {
       const result = await registerUseCase.execute({ username, password, email });
-      
+
       // Update the auth context with the new user and token
       contextLogin(result.token, result.user);
-      
+
       return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '회원가입에 실패했습니다';
@@ -35,10 +35,10 @@ export const useAuthOperations = (): UseAuthOperationsReturn => {
     setError(null);
     try {
       const result = await loginUseCase.execute({ username, password });
-      
+
       // Update the auth context with the user and token
       contextLogin(result.token, result.user);
-      
+
       return result;
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '로그인에 실패했습니다';

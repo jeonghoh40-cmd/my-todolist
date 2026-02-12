@@ -24,7 +24,7 @@ export const useTodos = (): UseTodosReturn => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   if (!token) {
     throw new Error('Authentication token is required to use todos');
@@ -34,7 +34,7 @@ export const useTodos = (): UseTodosReturn => {
     setIsLoading(true);
     setError(null);
     try {
-      const userId = useAuth().user?.id || 0; // Get user ID from context
+      const userId = user?.id || 0; // Get user ID from context
       const loadedTodos = await getTodosUseCase.execute(token, userId);
       setTodos(loadedTodos);
     } catch (err) {
@@ -46,8 +46,8 @@ export const useTodos = (): UseTodosReturn => {
 
   const addTodo = async (title: string, description?: string, dueDate?: Date): Promise<void> => {
     if (!token) return;
-    
-    const userId = useAuth().user?.id || 0; // Get user ID from context
+
+    const userId = user?.id || 0; // Get user ID from context
     try {
       const newTodo = await createTodoUseCase.execute(token, userId, { title, description, dueDate });
       setTodos(prev => [newTodo, ...prev]);
@@ -59,8 +59,8 @@ export const useTodos = (): UseTodosReturn => {
 
   const updateTodo = async (id: number, title: string, description?: string, dueDate?: Date): Promise<void> => {
     if (!token) return;
-    
-    const userId = useAuth().user?.id || 0; // Get user ID from context
+
+    const userId = user?.id || 0; // Get user ID from context
     try {
       const updatedTodo = await updateTodoUseCase.execute(token, userId, id, { title, description, dueDate });
       setTodos(prev => prev.map(todo => todo.id === id ? updatedTodo : todo));
@@ -72,8 +72,8 @@ export const useTodos = (): UseTodosReturn => {
 
   const removeTodo = async (id: number): Promise<void> => {
     if (!token) return;
-    
-    const userId = useAuth().user?.id || 0; // Get user ID from context
+
+    const userId = user?.id || 0; // Get user ID from context
     try {
       const success = await deleteTodoUseCase.execute(token, userId, id);
       if (success) {
@@ -87,8 +87,8 @@ export const useTodos = (): UseTodosReturn => {
 
   const toggleCompletion = async (id: number): Promise<void> => {
     if (!token) return;
-    
-    const userId = useAuth().user?.id || 0; // Get user ID from context
+
+    const userId = user?.id || 0; // Get user ID from context
     try {
       const updatedTodo = await toggleTodoCompletionUseCase.execute(token, userId, id);
       setTodos(prev => prev.map(todo => todo.id === id ? updatedTodo : todo));
