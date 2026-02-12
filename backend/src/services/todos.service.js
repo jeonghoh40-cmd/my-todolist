@@ -1,11 +1,28 @@
-const { 
-  createTodo, 
-  findTodosByUserId, 
-  findTodoById, 
-  updateTodo, 
-  deleteTodo, 
-  toggleTodoComplete 
-} = require('../models/todo.model');
+/**
+ * DEPRECATED: This file is deprecated. Use the Clean Architecture implementation instead.
+ * See ./src/usecases/todo.usecase.js for the new implementation.
+ * 
+ * This file remains for backward compatibility during migration.
+ */
+
+const {
+  CreateTodoUseCase,
+  GetTodosUseCase,
+  UpdateTodoUseCase,
+  DeleteTodoUseCase,
+  ToggleTodoCompletionUseCase
+} = require('../usecases/todo.usecase');
+const TodoRepositoryImpl = require('../frameworks-and-drivers/TodoRepositoryImpl');
+
+// Initialize dependencies
+const todoRepository = new TodoRepositoryImpl();
+
+// Initialize use cases
+const createTodoUseCase = new CreateTodoUseCase(todoRepository);
+const getTodosUseCase = new GetTodosUseCase(todoRepository);
+const updateTodoUseCase = new UpdateTodoUseCase(todoRepository);
+const deleteTodoUseCase = new DeleteTodoUseCase(todoRepository);
+const toggleTodoCompletionUseCase = new ToggleTodoCompletionUseCase(todoRepository);
 
 /**
  * 할일 생성 서비스
@@ -14,15 +31,15 @@ const {
  * @returns {Promise<Object>} 생성된 할일 객체
  */
 const createTodoService = async (userId, data) => {
-  const { title, description, dueDate } = data;
-
-  // title 필수 검증
-  if (!title) {
-    throw { code: 'E-103', message: 'Title is required', status: 400 };
+  try {
+    // Execute the use case
+    const todo = await createTodoUseCase.execute(userId, data);
+    
+    return todo;
+  } catch (error) {
+    // Re-throw the error to maintain the same interface
+    throw error;
   }
-
-  // createTodo 호출
-  return await createTodo(userId, title, description, dueDate);
 };
 
 /**
@@ -31,7 +48,15 @@ const createTodoService = async (userId, data) => {
  * @returns {Promise<Array>} 할일 배열
  */
 const getTodosService = async (userId) => {
-  return await findTodosByUserId(userId);
+  try {
+    // Execute the use case
+    const todos = await getTodosUseCase.execute(userId);
+    
+    return todos;
+  } catch (error) {
+    // Re-throw the error to maintain the same interface
+    throw error;
+  }
 };
 
 /**
@@ -42,26 +67,15 @@ const getTodosService = async (userId) => {
  * @returns {Promise<Object>} 수정된 할일 객체
  */
 const updateTodoService = async (userId, todoId, data) => {
-  const { title, description, dueDate } = data;
-
-  // 할일 조회
-  const todo = await findTodoById(todoId);
-  if (!todo) {
-    throw { code: 'E-104', message: 'Todo not found', status: 404 };
+  try {
+    // Execute the use case
+    const todo = await updateTodoUseCase.execute(userId, todoId, data);
+    
+    return todo;
+  } catch (error) {
+    // Re-throw the error to maintain the same interface
+    throw error;
   }
-
-  // 소유권 검증
-  if (todo.user_id !== userId) {
-    throw { code: 'E-102', message: 'Access denied', status: 403 };
-  }
-
-  // title 필수 검증
-  if (!title) {
-    throw { code: 'E-103', message: 'Title is required', status: 400 };
-  }
-
-  // updateTodo 호출
-  return await updateTodo(todoId, title, description, dueDate);
 };
 
 /**
@@ -71,19 +85,15 @@ const updateTodoService = async (userId, todoId, data) => {
  * @returns {Promise<boolean>} 삭제 성공 여부
  */
 const deleteTodoService = async (userId, todoId) => {
-  // 할일 조회
-  const todo = await findTodoById(todoId);
-  if (!todo) {
-    throw { code: 'E-104', message: 'Todo not found', status: 404 };
+  try {
+    // Execute the use case
+    const result = await deleteTodoUseCase.execute(userId, todoId);
+    
+    return result;
+  } catch (error) {
+    // Re-throw the error to maintain the same interface
+    throw error;
   }
-
-  // 소유권 검증
-  if (todo.user_id !== userId) {
-    throw { code: 'E-102', message: 'Access denied', status: 403 };
-  }
-
-  // deleteTodo 호출
-  return await deleteTodo(todoId);
 };
 
 /**
@@ -93,22 +103,15 @@ const deleteTodoService = async (userId, todoId) => {
  * @returns {Promise<Object>} 수정된 할일 객체
  */
 const toggleCompleteService = async (userId, todoId) => {
-  // 할일 조회
-  const todo = await findTodoById(todoId);
-  if (!todo) {
-    throw { code: 'E-104', message: 'Todo not found', status: 404 };
+  try {
+    // Execute the use case
+    const todo = await toggleTodoCompletionUseCase.execute(userId, todoId);
+    
+    return todo;
+  } catch (error) {
+    // Re-throw the error to maintain the same interface
+    throw error;
   }
-
-  // 소유권 검증
-  if (todo.user_id !== userId) {
-    throw { code: 'E-102', message: 'Access denied', status: 403 };
-  }
-
-  // 현재 상태의 반대로 토글
-  const newStatus = !todo.is_completed;
-  
-  // toggleTodoComplete 호출
-  return await toggleTodoComplete(todoId, newStatus);
 };
 
 module.exports = {

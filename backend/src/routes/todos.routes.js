@@ -1,12 +1,12 @@
 const express = require('express');
 const { authenticate } = require('../middleware/auth.middleware');
-const { 
+const {
   getTodosController,
   createTodoController,
   updateTodoController,
   deleteTodoController,
   toggleCompleteController
-} = require('../controllers/todos.controller');
+} = require('../interface-adapters/controllers/todo.controller');
 
 const router = express.Router();
 

@@ -8,6 +8,9 @@ const { testConnection } = require('./db/connection');
 const authRoutes = require('./routes/auth.routes');
 const todosRoutes = require('./routes/todos.routes');
 
+// Import composition root
+const compositionRoot = require('./composition-root');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -48,6 +51,7 @@ const startServer = async () => {
       console.log(`Server is running on port ${PORT}`);
       console.log(`Environment: ${process.env.NODE_ENV}`);
       console.log(`Health check: http://localhost:${PORT}/api/health`);
+      console.log('Clean Architecture backend initialized successfully');
     });
   } catch (error) {
     console.error('Failed to start server:', error);

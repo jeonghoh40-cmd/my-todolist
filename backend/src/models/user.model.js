@@ -1,4 +1,15 @@
-const { pool } = require('../db/connection');
+/**
+ * DEPRECATED: This file is deprecated. Use the Clean Architecture implementation instead.
+ * See ./src/frameworks-and-drivers/UserRepositoryImpl.js for the new implementation.
+ * 
+ * This file remains for backward compatibility during migration.
+ */
+
+const UserRepositoryImpl = require('../frameworks-and-drivers/UserRepositoryImpl');
+const User = require('../entities/User');
+
+// Create a singleton instance of the new repository
+const userRepository = new UserRepositoryImpl();
 
 /**
  * 새로운 사용자를 생성하는 함수
@@ -8,15 +19,16 @@ const { pool } = require('../db/connection');
  * @returns {Promise<Object>} 생성된 사용자 객체
  */
 const createUser = async (username, password, email) => {
-  const query = `
-    INSERT INTO users (username, password, email) 
-    VALUES ($1, $2, $3) 
-    RETURNING id, username, email, created_at
-  `;
-  const values = [username, password, email];
+  const userEntity = new User(null, username, password, email);
+  const createdUser = await userRepository.createUser(userEntity);
   
-  const result = await pool.query(query, values);
-  return result.rows[0];
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: createdUser.id,
+    username: createdUser.username,
+    email: createdUser.email,
+    created_at: createdUser.createdAt
+  };
 };
 
 /**
@@ -25,11 +37,18 @@ const createUser = async (username, password, email) => {
  * @returns {Promise<Object|null>} 사용자 객체 또는 null
  */
 const findUserByUsername = async (username) => {
-  const query = 'SELECT * FROM users WHERE username = $1';
-  const values = [username];
+  const userEntity = await userRepository.findByUsername(username);
   
-  const result = await pool.query(query, values);
-  return result.rows[0] || null;
+  if (!userEntity) return null;
+  
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: userEntity.id,
+    username: userEntity.username,
+    password: userEntity.password,
+    email: userEntity.email,
+    created_at: userEntity.createdAt
+  };
 };
 
 /**
@@ -38,11 +57,23 @@ const findUserByUsername = async (username) => {
  * @returns {Promise<Object|null>} 사용자 객체 또는 null
  */
 const findUserById = async (userId) => {
+  // Note: The new repository doesn't expose passwords for security
+  // This function is kept for backward compatibility but won't return password
   const query = 'SELECT id, username, email, created_at FROM users WHERE id = $1';
+  const { pool } = require('../db/connection');
   const values = [userId];
-  
+
   const result = await pool.query(query, values);
-  return result.rows[0] || null;
+  const userData = result.rows[0];
+  
+  if (!userData) return null;
+  
+  return {
+    id: userData.id,
+    username: userData.username,
+    email: userData.email,
+    created_at: userData.created_at
+  };
 };
 
 module.exports = {

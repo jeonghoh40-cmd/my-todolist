@@ -30,6 +30,9 @@ my-todolist의 프론트엔드는 사용자가 할일을 관리할 수 있는 �
 - ✅ Google Calendar 스타일 UI
 
 ---
+##반드시 준수할 것
+- SOLID 원칙 준수
+- Clean Architecture 준수
 
 ## 기술 스택
 

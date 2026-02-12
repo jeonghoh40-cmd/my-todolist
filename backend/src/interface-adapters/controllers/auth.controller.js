@@ -1,20 +1,25 @@
-/**
- * DEPRECATED: This file is deprecated. Use the Clean Architecture implementation instead.
- * See ./src/interface-adapters/controllers/auth.controller.js for the new implementation.
- * 
- * This file remains for backward compatibility during migration.
- */
+const { RegisterUserUseCase, LoginUserUseCase } = require('../../usecases/auth.usecase');
+const UserRepositoryImpl = require('../../frameworks-and-drivers/UserRepositoryImpl');
+const PasswordHasherImpl = require('../../frameworks-and-drivers/PasswordHasherImpl');
+const TokenGeneratorImpl = require('../../frameworks-and-drivers/TokenGeneratorImpl');
 
-const { register, login } = require('../services/auth.service');
+// Initialize dependencies
+const userRepository = new UserRepositoryImpl();
+const passwordHasher = new PasswordHasherImpl();
+const tokenGenerator = new TokenGeneratorImpl();
+
+// Initialize use cases
+const registerUserUseCase = new RegisterUserUseCase(userRepository, passwordHasher);
+const loginUserUseCase = new LoginUserUseCase(userRepository, passwordHasher, tokenGenerator);
 
 /**
- * 회원가입 컨트롤러
+ * Register Controller - Interface Adapter for registration
  */
 const registerController = async (req, res) => {
   try {
     const { username, password, email } = req.body;
 
-    // 입력 검증 (필수 필드 확인)
+    // Input validation
     if (!username || !password || !email) {
       return res.status(400).json({
         error: 'E-004',
@@ -22,10 +27,10 @@ const registerController = async (req, res) => {
       });
     }
 
-    // 서비스 호출 (now uses Clean Architecture internally)
-    const user = await register(username, password, email);
+    // Execute use case
+    const user = await registerUserUseCase.execute({ username, password, email });
 
-    // 성공 응답 (HTTP 201)
+    // Return response
     res.status(201).json({
       user: {
         id: user.id,
@@ -35,7 +40,7 @@ const registerController = async (req, res) => {
       }
     });
   } catch (error) {
-    // 에러 처리
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
@@ -48,22 +53,22 @@ const registerController = async (req, res) => {
 };
 
 /**
- * 로그인 컨트롤러
+ * Login Controller - Interface Adapter for login
  */
 const loginController = async (req, res) => {
   try {
     const { username, password } = req.body;
 
-    // 서비스 호출 (now uses Clean Architecture internally)
-    const result = await login(username, password);
+    // Execute use case
+    const result = await loginUserUseCase.execute({ username, password });
 
-    // 성공 응답 (HTTP 200 + JWT 토큰)
+    // Return response
     res.status(200).json({
       user: result.user,
       token: result.token
     });
   } catch (error) {
-    // 에러 처리
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';

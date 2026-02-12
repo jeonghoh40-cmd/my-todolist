@@ -1,4 +1,15 @@
-const { pool } = require('../db/connection');
+/**
+ * DEPRECATED: This file is deprecated. Use the Clean Architecture implementation instead.
+ * See ./src/frameworks-and-drivers/TodoRepositoryImpl.js for the new implementation.
+ * 
+ * This file remains for backward compatibility during migration.
+ */
+
+const TodoRepositoryImpl = require('../frameworks-and-drivers/TodoRepositoryImpl');
+const Todo = require('../entities/Todo');
+
+// Create a singleton instance of the new repository
+const todoRepository = new TodoRepositoryImpl();
 
 /**
  * 새로운 할일을 생성하는 함수
@@ -9,15 +20,20 @@ const { pool } = require('../db/connection');
  * @returns {Promise<Object>} 생성된 할일 객체
  */
 const createTodo = async (userId, title, description, dueDate) => {
-  const query = `
-    INSERT INTO todos (user_id, title, description, due_date) 
-    VALUES ($1, $2, $3, $4) 
-    RETURNING *
-  `;
-  const values = [userId, title, description, dueDate];
+  const todoEntity = new Todo(null, userId, title, description, dueDate);
+  const createdTodo = await todoRepository.createTodo(todoEntity);
   
-  const result = await pool.query(query, values);
-  return result.rows[0];
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: createdTodo.id,
+    user_id: createdTodo.userId,
+    title: createdTodo.title,
+    description: createdTodo.description,
+    due_date: createdTodo.dueDate,
+    is_completed: createdTodo.isCompleted,
+    created_at: createdTodo.createdAt,
+    updated_at: createdTodo.updatedAt
+  };
 };
 
 /**
@@ -26,15 +42,19 @@ const createTodo = async (userId, title, description, dueDate) => {
  * @returns {Promise<Array>} 할일 배열
  */
 const findTodosByUserId = async (userId) => {
-  const query = `
-    SELECT * FROM todos 
-    WHERE user_id = $1 
-    ORDER BY created_at DESC
-  `;
-  const values = [userId];
+  const todoEntities = await todoRepository.findTodosByUserId(userId);
   
-  const result = await pool.query(query, values);
-  return result.rows;
+  // Convert entities back to plain objects for backward compatibility
+  return todoEntities.map(todoEntity => ({
+    id: todoEntity.id,
+    user_id: todoEntity.userId,
+    title: todoEntity.title,
+    description: todoEntity.description,
+    due_date: todoEntity.dueDate,
+    is_completed: todoEntity.isCompleted,
+    created_at: todoEntity.createdAt,
+    updated_at: todoEntity.updatedAt
+  }));
 };
 
 /**
@@ -43,11 +63,21 @@ const findTodosByUserId = async (userId) => {
  * @returns {Promise<Object|null>} 할일 객체 또는 null
  */
 const findTodoById = async (todoId) => {
-  const query = 'SELECT * FROM todos WHERE id = $1';
-  const values = [todoId];
+  const todoEntity = await todoRepository.findTodoById(todoId);
   
-  const result = await pool.query(query, values);
-  return result.rows[0] || null;
+  if (!todoEntity) return null;
+  
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: todoEntity.id,
+    user_id: todoEntity.userId,
+    title: todoEntity.title,
+    description: todoEntity.description,
+    due_date: todoEntity.dueDate,
+    is_completed: todoEntity.isCompleted,
+    created_at: todoEntity.createdAt,
+    updated_at: todoEntity.updatedAt
+  };
 };
 
 /**
@@ -59,16 +89,28 @@ const findTodoById = async (todoId) => {
  * @returns {Promise<Object>} 수정된 할일 객체
  */
 const updateTodo = async (todoId, title, description, dueDate) => {
-  const query = `
-    UPDATE todos 
-    SET title = $1, description = $2, due_date = $3, updated_at = CURRENT_TIMESTAMP 
-    WHERE id = $4 
-    RETURNING *
-  `;
-  const values = [title, description, dueDate, todoId];
+  // Find the existing todo first
+  const existingTodo = await todoRepository.findTodoById(todoId);
+  if (!existingTodo) return null;
   
-  const result = await pool.query(query, values);
-  return result.rows[0];
+  // Update the entity
+  existingTodo.setTitle(title);
+  existingTodo.setDescription(description);
+  existingTodo.setDueDate(dueDate);
+  
+  const updatedTodo = await todoRepository.updateTodo(existingTodo);
+  
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: updatedTodo.id,
+    user_id: updatedTodo.userId,
+    title: updatedTodo.title,
+    description: updatedTodo.description,
+    due_date: updatedTodo.dueDate,
+    is_completed: updatedTodo.isCompleted,
+    created_at: updatedTodo.createdAt,
+    updated_at: updatedTodo.updatedAt
+  };
 };
 
 /**
@@ -77,11 +119,7 @@ const updateTodo = async (todoId, title, description, dueDate) => {
  * @returns {Promise<boolean>} 삭제 성공 여부
  */
 const deleteTodo = async (todoId) => {
-  const query = 'DELETE FROM todos WHERE id = $1';
-  const values = [todoId];
-  
-  const result = await pool.query(query, values);
-  return result.rowCount > 0;
+  return await todoRepository.deleteTodo(todoId);
 };
 
 /**
@@ -91,16 +129,27 @@ const deleteTodo = async (todoId) => {
  * @returns {Promise<Object>} 수정된 할일 객체
  */
 const toggleTodoComplete = async (todoId, isCompleted) => {
-  const query = `
-    UPDATE todos 
-    SET is_completed = $1, updated_at = CURRENT_TIMESTAMP 
-    WHERE id = $2 
-    RETURNING *
-  `;
-  const values = [isCompleted, todoId];
+  // Find the existing todo first
+  const existingTodo = await todoRepository.findTodoById(todoId);
+  if (!existingTodo) return null;
   
-  const result = await pool.query(query, values);
-  return result.rows[0];
+  // Toggle completion status
+  existingTodo.isCompleted = isCompleted;
+  existingTodo.updatedAt = new Date();
+  
+  const updatedTodo = await todoRepository.updateTodo(existingTodo);
+  
+  // Convert entity back to plain object for backward compatibility
+  return {
+    id: updatedTodo.id,
+    user_id: updatedTodo.userId,
+    title: updatedTodo.title,
+    description: updatedTodo.description,
+    due_date: updatedTodo.dueDate,
+    is_completed: updatedTodo.isCompleted,
+    created_at: updatedTodo.createdAt,
+    updated_at: updatedTodo.updatedAt
+  };
 };
 
 module.exports = {

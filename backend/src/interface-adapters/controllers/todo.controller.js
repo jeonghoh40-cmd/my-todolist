@@ -1,29 +1,36 @@
-/**
- * DEPRECATED: This file is deprecated. Use the Clean Architecture implementation instead.
- * See ./src/interface-adapters/controllers/todo.controller.js for the new implementation.
- * 
- * This file remains for backward compatibility during migration.
- */
-
 const {
-  getTodosService,
-  createTodoService,
-  updateTodoService,
-  deleteTodoService,
-  toggleCompleteService
-} = require('../services/todos.service');
+  CreateTodoUseCase,
+  GetTodosUseCase,
+  UpdateTodoUseCase,
+  DeleteTodoUseCase,
+  ToggleTodoCompletionUseCase
+} = require('../../usecases/todo.usecase');
+const TodoRepositoryImpl = require('../../frameworks-and-drivers/TodoRepositoryImpl');
+
+// Initialize dependencies
+const todoRepository = new TodoRepositoryImpl();
+
+// Initialize use cases
+const createTodoUseCase = new CreateTodoUseCase(todoRepository);
+const getTodosUseCase = new GetTodosUseCase(todoRepository);
+const updateTodoUseCase = new UpdateTodoUseCase(todoRepository);
+const deleteTodoUseCase = new DeleteTodoUseCase(todoRepository);
+const toggleTodoCompletionUseCase = new ToggleTodoCompletionUseCase(todoRepository);
 
 /**
- * 할일 목록 조회 컨트롤러
+ * Get Todos Controller - Interface Adapter for getting todos
  */
 const getTodosController = async (req, res) => {
   try {
-    const userId = req.user.userId; // 인증 미들웨어에서 설정된 사용자 ID
+    const userId = req.user.userId; // Extracted from authentication middleware
 
-    const todos = await getTodosService(userId);
+    // Execute use case
+    const todos = await getTodosUseCase.execute(userId);
 
+    // Return response
     res.status(200).json(todos);
   } catch (error) {
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
@@ -36,17 +43,20 @@ const getTodosController = async (req, res) => {
 };
 
 /**
- * 할일 생성 컨트롤러
+ * Create Todo Controller - Interface Adapter for creating a todo
  */
 const createTodoController = async (req, res) => {
   try {
-    const userId = req.user.userId; // 인증 미들웨어에서 설정된 사용자 ID
+    const userId = req.user.userId; // Extracted from authentication middleware
     const { title, description, dueDate } = req.body;
 
-    const todo = await createTodoService(userId, { title, description, dueDate });
+    // Execute use case
+    const todo = await createTodoUseCase.execute(userId, { title, description, dueDate });
 
+    // Return response
     res.status(201).json(todo);
   } catch (error) {
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
@@ -59,18 +69,21 @@ const createTodoController = async (req, res) => {
 };
 
 /**
- * 할일 수정 컨트롤러
+ * Update Todo Controller - Interface Adapter for updating a todo
  */
 const updateTodoController = async (req, res) => {
   try {
-    const userId = req.user.userId; // 인증 미들웨어에서 설정된 사용자 ID
+    const userId = req.user.userId; // Extracted from authentication middleware
     const todoId = parseInt(req.params.id, 10);
     const { title, description, dueDate } = req.body;
 
-    const todo = await updateTodoService(userId, todoId, { title, description, dueDate });
+    // Execute use case
+    const todo = await updateTodoUseCase.execute(userId, todoId, { title, description, dueDate });
 
+    // Return response
     res.status(200).json(todo);
   } catch (error) {
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
@@ -83,17 +96,20 @@ const updateTodoController = async (req, res) => {
 };
 
 /**
- * 할일 삭제 컨트롤러
+ * Delete Todo Controller - Interface Adapter for deleting a todo
  */
 const deleteTodoController = async (req, res) => {
   try {
-    const userId = req.user.userId; // 인증 미들웨어에서 설정된 사용자 ID
+    const userId = req.user.userId; // Extracted from authentication middleware
     const todoId = parseInt(req.params.id, 10);
 
-    await deleteTodoService(userId, todoId);
+    // Execute use case
+    await deleteTodoUseCase.execute(userId, todoId);
 
+    // Return response
     res.status(204).send(); // No Content
   } catch (error) {
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
@@ -106,17 +122,20 @@ const deleteTodoController = async (req, res) => {
 };
 
 /**
- * 할일 완료 상태 토글 컨트롤러
+ * Toggle Todo Completion Controller - Interface Adapter for toggling completion
  */
 const toggleCompleteController = async (req, res) => {
   try {
-    const userId = req.user.userId; // 인증 미들웨어에서 설정된 사용자 ID
+    const userId = req.user.userId; // Extracted from authentication middleware
     const todoId = parseInt(req.params.id, 10);
 
-    const todo = await toggleCompleteService(userId, todoId);
+    // Execute use case
+    const todo = await toggleTodoCompletionUseCase.execute(userId, todoId);
 
+    // Return response
     res.status(200).json(todo);
   } catch (error) {
+    // Error handling
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
