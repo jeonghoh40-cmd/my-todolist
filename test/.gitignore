@@ -1,0 +1,11 @@
+# Playwright test results
+e2e/test-results/
+node_modules/
+package-lock.json
+
+# Playwright browsers
+.cache/
+
+# Logs
+*.log
+npm-debug.log*
