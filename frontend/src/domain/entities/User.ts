@@ -19,9 +19,10 @@ export class User implements IUser {
   }
 
   // Business rules for user
-  validateEmail(): boolean {
+  validateEmail(email?: string): boolean {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(this.email);
+    const emailToValidate = email || this.email;
+    return emailRegex.test(emailToValidate);
   }
 
   updateEmail(newEmail: string): void {

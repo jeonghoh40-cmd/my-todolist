@@ -1,5 +1,6 @@
 import { Todo } from '../../domain/entities/Todo';
 import { todoAPI } from '../../api/api';
+import type { Todo as TodoDTO } from '../../types/todo';
 
 // Define the interface type for reference
 interface ITodoRepository {
@@ -13,7 +14,7 @@ interface ITodoRepository {
 export class TodoRepositoryImpl {
   getTodos: (token: string) => Promise<Todo[]> = async (token: string): Promise<Todo[]> => {
     const response = await todoAPI.getTodos(token);
-    return response.map(dto => {
+    return response.map((dto: TodoDTO) => {
       // Convert string dates to Date objects
       return new Todo(
         dto.id,
@@ -52,11 +53,10 @@ export class TodoRepositoryImpl {
 
   updateTodo: (token: string, todoId: number, todo: Partial<Omit<Todo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>) => Promise<Todo> =
     async (token: string, todoId: number, todo: Partial<Omit<Todo, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>): Promise<Todo> => {
-      const requestData = {
-        title: todo.title || undefined,
-        description: todo.description || undefined,
-        due_date: todo.dueDate ? todo.dueDate.toISOString().split('T')[0] : undefined
-      };
+      const requestData: any = {};
+      if (todo.title !== undefined) requestData.title = todo.title;
+      if (todo.description !== undefined) requestData.description = todo.description;
+      if (todo.dueDate !== undefined) requestData.due_date = todo.dueDate.toISOString().split('T')[0];
 
       const response = await todoAPI.updateTodo(token, todoId, requestData);
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { registerUseCase, loginUseCase } from '../composition-root';
-import { User } from '../domain/entities/User';
+import type { User } from '../domain/entities/User';
+import type { User as AuthUser } from '../types/auth';
 import { useAuth } from '../contexts/AuthContext';
 
 interface UseAuthOperationsReturn {
@@ -20,8 +21,16 @@ export const useAuthOperations = (): UseAuthOperationsReturn => {
     try {
       const result = await registerUseCase.execute({ username, password, email });
 
+      // Convert domain User to AuthUser for context
+      const authUser: AuthUser = {
+        id: result.user.id,
+        username: result.user.username,
+        email: result.user.email,
+        created_at: result.user.createdAt.toISOString()
+      };
+
       // Update the auth context with the new user and token
-      contextLogin(result.token, result.user);
+      contextLogin(result.token, authUser);
 
       return result;
     } catch (err) {
@@ -36,8 +45,16 @@ export const useAuthOperations = (): UseAuthOperationsReturn => {
     try {
       const result = await loginUseCase.execute({ username, password });
 
+      // Convert domain User to AuthUser for context
+      const authUser: AuthUser = {
+        id: result.user.id,
+        username: result.user.username,
+        email: result.user.email,
+        created_at: result.user.createdAt.toISOString()
+      };
+
       // Update the auth context with the user and token
-      contextLogin(result.token, result.user);
+      contextLogin(result.token, authUser);
 
       return result;
     } catch (err) {
