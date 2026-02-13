@@ -21,6 +21,29 @@ app.use(cors({
   credentials: true
 }));
 
+// Request/Response 로깅 미들웨어
+app.use((req, res, next) => {
+  const start = Date.now();
+  const timestamp = new Date().toISOString();
+
+  console.log(`[${timestamp}] ${req.method} ${req.url}`);
+  console.log(`  Headers:`, JSON.stringify(req.headers, null, 2));
+  if (req.body && Object.keys(req.body).length > 0) {
+    // 비밀번호는 로그에서 제외
+    const bodyToLog = { ...req.body };
+    if (bodyToLog.password) bodyToLog.password = '***';
+    console.log(`  Body:`, JSON.stringify(bodyToLog, null, 2));
+  }
+
+  // 응답 후 로그
+  res.on('finish', () => {
+    const duration = Date.now() - start;
+    console.log(`[${timestamp}] ${req.method} ${req.url} - ${res.statusCode} (${duration}ms)`);
+  });
+
+  next();
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'OK',

@@ -18,9 +18,11 @@ const loginUserUseCase = new LoginUserUseCase(userRepository, passwordHasher, to
 const registerController = async (req, res) => {
   try {
     const { username, password, email } = req.body;
+    console.log(`[AUTH] Register attempt - username: ${username}, email: ${email}`);
 
     // Input validation
     if (!username || !password || !email) {
+      console.log(`[AUTH] Register failed - Missing required fields`);
       return res.status(400).json({
         error: 'E-004',
         message: 'Username, password, and email are required'
@@ -29,6 +31,7 @@ const registerController = async (req, res) => {
 
     // Execute use case
     const user = await registerUserUseCase.execute({ username, password, email });
+    console.log(`[AUTH] Register success - user ID: ${user.id}, username: ${user.username}`);
 
     // Return response
     res.status(201).json({
@@ -44,6 +47,7 @@ const registerController = async (req, res) => {
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
+    console.error(`[AUTH] Register error - Code: ${errorCode}, Message: ${message}`);
 
     res.status(statusCode).json({
       error: errorCode,
@@ -58,9 +62,11 @@ const registerController = async (req, res) => {
 const loginController = async (req, res) => {
   try {
     const { username, password } = req.body;
+    console.log(`[AUTH] Login attempt - username: ${username}`);
 
     // Execute use case
     const result = await loginUserUseCase.execute({ username, password });
+    console.log(`[AUTH] Login success - user ID: ${result.user.id}, username: ${result.user.username}`);
 
     // Return response
     res.status(200).json({
@@ -72,6 +78,7 @@ const loginController = async (req, res) => {
     const statusCode = error.status || 500;
     const errorCode = error.code || 'E-999';
     const message = error.message || 'Internal server error';
+    console.error(`[AUTH] Login error - Code: ${errorCode}, Message: ${message}`);
 
     res.status(statusCode).json({
       error: errorCode,
