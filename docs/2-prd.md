@@ -2,10 +2,12 @@
 
 ## 문서 정보
 - **프로젝트명**: my-todolist
-- **버전**: 1.0.0 (MVP)
+- **버전**: 2.0.0 (Clean Architecture)
 - **작성일**: 2026-02-11
-- **MVP 출시 목표**: 2026-02-14 (금요일 오후)
-- **개발 기간**: 3일
+- **최종 수정일**: 2026-02-13
+- **MVP 출시**: 2026-02-14 완료 ✅
+- **V2.0 출시**: 2026-02-13 완료 ✅
+- **개발 기간**: 3일 (MVP) + 1일 (V2.0 아키텍처 개선)
 
 ---
 
@@ -18,11 +20,15 @@
 - **간편한 일정 관리**: 회원가입 후 바로 사용 가능한 직관적 UI
 - **안전한 데이터 관리**: 사용자 인증을 통한 개인 데이터 보호
 - **접근성**: 데스크톱/모바일 모두에서 사용 가능한 반응형 디자인
+- **Clean Architecture**: 유지보수성과 테스트 용이성 확보 (V2.0)
+- **사용자 경험**: 다크 모드 및 다국어(한/영) 지원 (V2.0)
 
 ### 1.3 성공 지표
-- 금요일 오후까지 MVP 출시 완료
-- 핵심 기능(회원가입, 로그인, 할일 CRUD) 100% 동작
-- 로컬 환경에서 통합 테스트 통과
+- ✅ 금요일 오후까지 MVP 출시 완료 (2026-02-14)
+- ✅ 핵심 기능(회원가입, 로그인, 할일 CRUD) 100% 동작
+- ✅ 로컬 환경에서 통합 테스트 통과
+- ✅ Clean Architecture 적용 완료 (2026-02-13)
+- ✅ 다크 모드 및 다국어 지원 추가 (2026-02-13)
 
 ---
 
@@ -65,18 +71,25 @@
 
 ### 2.3 범위 정의
 
-#### In-Scope (MVP 필수 기능)
-✅ **사용자 관리**
-- 회원가입 (username, password, email)
-- 로그인 (JWT 토큰 발급)
-- 로그아웃 (클라이언트 토큰 삭제)
+#### ✅ Completed (MVP & V2.0 완료 기능)
+**사용자 관리**
+- ✅ 회원가입 (username, password, email)
+- ✅ 로그인 (JWT 토큰 발급)
+- ✅ 로그아웃 (클라이언트 토큰 삭제)
 
-✅ **할일 관리 (인증된 사용자만)**
-- 할일 추가 (제목 필수, 설명/마감일 선택)
-- 할일 목록 조회 (본인 할일만)
-- 할일 수정
-- 할일 삭제 (Hard Delete, 확인 UI 필수)
-- 할일 완료/미완료 토글
+**할일 관리 (인증된 사용자만)**
+- ✅ 할일 추가 (제목 필수, 설명/마감일 선택)
+- ✅ 할일 목록 조회 (본인 할일만)
+- ✅ 할일 수정
+- ✅ 할일 삭제 (Hard Delete, 확인 UI 필수)
+- ✅ 할일 완료/미완료 토글
+
+**아키텍처 및 UX (V2.0 추가)**
+- ✅ Clean Architecture 적용 (Frontend & Backend)
+- ✅ 다크 모드 지원 (ThemeContext + CSS Variables)
+- ✅ 다국어 지원 (Korean/English)
+- ✅ 시스템 테마 자동 감지
+- ✅ 엔티티 비즈니스 로직 캡슐화
 
 #### Out-of-Scope (향후 버전)
 ❌ 배포 환경 구성 (Vercel 배포는 고려하지 않음)
@@ -290,30 +303,43 @@
 ## 5. 기술 스택 및 아키텍처
 
 ### 5.1 시스템 아키텍처
-**3-Tier Architecture**
+**Clean Architecture (Hexagonal Architecture) - V2.0**
 
 ```
-┌─────────────────────────────────────────┐
-│         Presentation Layer              │
-│      React 19 + TypeScript              │
-│    (SPA, 반응형 디자인)                   │
-└─────────────────┬───────────────────────┘
-                  │ REST API (JSON)
-                  │ JWT Authentication
-┌─────────────────▼───────────────────────┐
-│         Application Layer               │
-│      Node.js + Express                  │
-│   pg 라이브러리 (PostgreSQL 연동)         │
-│   ⚠️ Prisma 사용 절대 금지!              │
-└─────────────────┬───────────────────────┘
-                  │ SQL Queries
-                  │ (pg 라이브러리)
-┌─────────────────▼───────────────────────┐
-│          Data Layer                     │
-│        PostgreSQL 17                    │
-│   (users, todos 테이블)                  │
-└─────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────┐
+│              Presentation Layer (UI)                    │
+│         React 19 + TypeScript + Vite                    │
+│    Components, Pages, Contexts (Theme, i18n)           │
+│         반응형 디자인 + 다크 모드                          │
+└────────────────────┬────────────────────────────────────┘
+                     │ REST API (JSON) + JWT
+┌────────────────────▼────────────────────────────────────┐
+│            Interface Adapters                           │
+│      Controllers (Request/Response 변환)                │
+│         API Routes, Middleware                          │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│            Use Cases (Business Logic)                   │
+│    AuthUseCases, TodoUseCases                          │
+│         비즈니스 규칙 처리                                │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│                 Entities                                │
+│          User, Todo (Domain Model)                      │
+│         비즈니스 메서드 캡슐화                             │
+└────────────────────┬────────────────────────────────────┘
+                     │
+┌────────────────────▼────────────────────────────────────┐
+│       Frameworks & Drivers                              │
+│   Repository Implementations (pg 라이브러리)             │
+│   PasswordHasher, TokenGenerator                        │
+│          PostgreSQL 17                                  │
+└─────────────────────────────────────────────────────────┘
 ```
+
+**의존성 흐름**: 외부 → 내부 (의존성 역전 원칙)
 
 ### 5.2 기술 스택 상세
 
@@ -322,21 +348,26 @@
 |------|------|------|
 | **프레임워크** | React 19 | 최신 버전 사용 |
 | **언어** | TypeScript | 타입 안정성 |
-| **상태 관리** | Context API 또는 useState | MVP는 간단한 상태 관리로 충분 |
-| **HTTP 클라이언트** | fetch 또는 axios | API 통신 |
-| **스타일링** | CSS Modules 또는 Tailwind CSS | 빠른 개발을 위해 선택 |
-| **라우팅** | React Router v6 | SPA 라우팅 |
+| **빌드 도구** | Vite 7.3.1 | ⚡ 빠른 빌드 및 HMR |
+| **상태 관리** | Context API (AuthContext, ThemeContext, LanguageContext) | Clean Architecture 적용 |
+| **HTTP 클라이언트** | axios | API 통신 |
+| **스타일링** | CSS Variables (Inline Styles) | 다크 모드 지원 |
+| **라우팅** | React Router v7 | SPA 라우팅 |
+| **다국어** | Custom LanguageContext | Korean/English 지원 |
+| **테마** | Custom ThemeContext | 다크 모드 + 시스템 테마 감지 |
 
 #### 백엔드
 | 항목 | 기술 | 비고 |
 |------|------|------|
-| **런타임** | Node.js 18+ | LTS 버전 |
+| **런타임** | Node.js 24.13.0 | 최신 LTS 버전 |
 | **프레임워크** | Express.js | 경량 웹 프레임워크 |
-| **DB 연동** | **pg (node-postgres)** | ⚠️ **Prisma 절대 사용 금지!** |
+| **아키텍처** | Clean Architecture | Entities, UseCases, Repositories 분리 |
+| **DB 연동** | **pg (node-postgres)** | ✅ SQL 직접 작성, Prisma 미사용 |
 | **인증** | JWT (jsonwebtoken) | ADR-001 참조 |
 | **비밀번호 암호화** | bcrypt | ADR-003 참조, cost factor 10 |
 | **환경 변수** | dotenv | 설정 관리 |
-| **검증** | express-validator | 입력 검증 |
+| **CORS** | cors | Frontend 연동 |
+| **DI** | Composition Root | 의존성 주입 패턴 |
 
 #### 데이터베이스
 | 항목 | 기술 | 비고 |
@@ -358,12 +389,14 @@
 
 ### 5.4 데이터베이스 스키마
 
+**Note**: DB 컬럼은 snake_case, 애플리케이션 레이어는 camelCase 사용
+
 ```sql
 -- users 테이블
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   username VARCHAR(50) UNIQUE NOT NULL,
-  password VARCHAR(255) NOT NULL,  -- bcrypt 해시 (60자)
+  password VARCHAR(60) NOT NULL,  -- bcrypt 해시 (60자)
   email VARCHAR(100) NOT NULL,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -384,6 +417,13 @@ CREATE TABLE todos (
 CREATE INDEX idx_todos_user_id ON todos(user_id);
 CREATE INDEX idx_todos_is_completed ON todos(is_completed);
 ```
+
+**매핑 규칙** (Repository 레이어에서 자동 변환):
+- `created_at` ↔ `createdAt`
+- `updated_at` ↔ `updatedAt`
+- `user_id` ↔ `userId`
+- `is_completed` ↔ `isCompleted`
+- `due_date` ↔ `dueDate`
 
 ### 5.5 API 설계
 
@@ -695,22 +735,40 @@ PORT=3001
 NODE_ENV=development
 ```
 
-### 11.2 프로젝트 구조 예시
+### 11.2 프로젝트 구조 (Clean Architecture)
 ```
 my-todolist/
 ├── backend/
 │   ├── src/
-│   │   ├── controllers/
-│   │   │   ├── auth.controller.js
-│   │   │   └── todos.controller.js
+│   │   ├── entities/              # 도메인 엔티티
+│   │   │   ├── User.js
+│   │   │   └── Todo.js
+│   │   ├── usecases/             # 비즈니스 로직
+│   │   │   ├── auth.usecase.js
+│   │   │   └── todo.usecase.js
+│   │   ├── interfaces/           # 인터페이스 정의
+│   │   │   ├── UserRepositoryInterface.js
+│   │   │   ├── TodoRepositoryInterface.js
+│   │   │   ├── PasswordHasherInterface.js
+│   │   │   └── TokenGeneratorInterface.js
+│   │   ├── interface-adapters/
+│   │   │   └── controllers/      # HTTP 요청/응답 처리
+│   │   │       ├── auth.controller.js
+│   │   │       └── todo.controller.js
+│   │   ├── frameworks-and-drivers/
+│   │   │   ├── UserRepositoryImpl.js
+│   │   │   ├── TodoRepositoryImpl.js
+│   │   │   ├── PasswordHasherImpl.js
+│   │   │   └── TokenGeneratorImpl.js
 │   │   ├── routes/
 │   │   │   ├── auth.routes.js
 │   │   │   └── todos.routes.js
 │   │   ├── middleware/
 │   │   │   └── auth.middleware.js
 │   │   ├── db/
-│   │   │   ├── db.js (pg 연결)
+│   │   │   ├── connection.js (pg)
 │   │   │   └── schema.sql
+│   │   ├── composition-root.js   # DI 컨테이너
 │   │   └── server.js
 │   ├── .env
 │   ├── package.json
@@ -718,6 +776,22 @@ my-todolist/
 │
 ├── frontend/
 │   ├── src/
+│   │   ├── domain/               # 도메인 계층
+│   │   │   ├── entities/
+│   │   │   │   └── Todo.ts
+│   │   │   └── repositories/
+│   │   ├── application/          # 애플리케이션 계층
+│   │   │   ├── usecases/
+│   │   │   │   ├── AuthUseCases.ts
+│   │   │   │   └── TodoUseCases.ts
+│   │   │   └── dtos/
+│   │   ├── infrastructure/       # 인프라 계층
+│   │   │   ├── repositories/
+│   │   │   └── services/
+│   │   ├── contexts/             # React Context
+│   │   │   ├── AuthContext.tsx
+│   │   │   ├── ThemeContext.tsx
+│   │   │   └── LanguageContext.tsx
 │   │   ├── pages/
 │   │   │   ├── Login.tsx
 │   │   │   ├── Register.tsx
@@ -725,11 +799,12 @@ my-todolist/
 │   │   ├── components/
 │   │   │   ├── TodoItem.tsx
 │   │   │   ├── TodoForm.tsx
-│   │   │   └── ConfirmModal.tsx
-│   │   ├── hooks/
-│   │   │   └── useAuth.ts
+│   │   │   ├── ConfirmDialog.tsx
+│   │   │   ├── LoadingSpinner.tsx
+│   │   │   └── LanguageSelector.tsx
 │   │   ├── api/
 │   │   │   └── api.ts
+│   │   ├── index.css
 │   │   ├── App.tsx
 │   │   └── main.tsx
 │   ├── package.json
@@ -737,7 +812,11 @@ my-todolist/
 │
 └── docs/
     ├── 1-domain-definition.md
-    └── 2-prd.md (본 문서)
+    ├── 2-prd.md (본 문서)
+    ├── 7-execution-plan.md
+    ├── 8-wireframe.md
+    ├── 9-style-guide.md
+    └── 10-e2e-test-guide.md
 ```
 
 ### 11.3 참고 문서
@@ -749,6 +828,47 @@ my-todolist/
 ---
 
 ## 문서 변경 이력
+
+### Version 2.0.0 (2026-02-13) - Clean Architecture 적용 및 UX 개선
+
+**아키텍처 변경:**
+- Clean Architecture (Hexagonal Architecture) 적용
+  - 백엔드: Entities → Use Cases → Interface Adapters → Frameworks & Drivers
+  - 프론트엔드: Domain → Application → Infrastructure → Presentation
+- 의존성 역전 원칙(DIP) 적용으로 비즈니스 로직 격리
+- Repository 패턴 및 Dependency Injection 도입
+
+**엔티티 비즈니스 로직 캡슐화:**
+- User 엔티티: `validateEmail()`, `updateEmail()`, `updateUsername()` 메서드 추가
+- Todo 엔티티: `validate()`, `setTitle()`, `setDescription()`, `setDueDate()`, `toggleCompletion()`, `belongsToUser()` 메서드 추가
+- 데이터 무결성 보장 및 비즈니스 규칙 엔티티 내부 구현
+
+**UX 개선:**
+- 다크 모드 지원 추가 (ThemeContext + CSS Variables)
+- 시스템 테마 자동 감지 (`prefers-color-scheme`)
+- 다국어 지원 (한국어/영어) - LanguageContext 기반
+- 반응형 디자인 강화
+
+**기술 스택 업데이트:**
+- 백엔드: Node.js 24.13.0 (최신 LTS)
+- 프론트엔드: React 19, Vite 7.3.1
+- Clean Architecture 기반 프로젝트 구조 재구성
+- Context API를 통한 상태 관리 (AuthContext, ThemeContext, LanguageContext)
+
+**데이터베이스 매핑 규칙 문서화:**
+- snake_case (DB) ↔ camelCase (Application Layer) 자동 변환 규칙 명시
+- Repository 레이어에서 매핑 처리
+
+**문서 업데이트:**
+- 아키텍처 다이어그램 업데이트 (3-Tier → Clean Architecture)
+- 프로젝트 구조 섹션 전체 재작성
+- 기술 스택 상세 정보 갱신
+- 완료된 기능 체크마크(✅) 표시
+
+---
+
+### Version 1.0.0 (2026-02-11) - MVP 초안 작성
+
 | 버전 | 날짜 | 작성자 | 변경 내용 |
 |------|------|--------|-----------|
 | 1.0.0 | 2026-02-11 | Business Analyst | 초안 작성 (MVP 범위 정의) |
