@@ -1,9 +1,13 @@
 # 도메인 정의서 - my-todolist
 
+> **버전**: 2.0
+> **최종 수정일**: 2026-02-13
+> **아키텍처**: Clean Architecture
+
 ## 1. 프로젝트 개요
 
 ### 1.1 프로젝트 명
-my-todolist - 인증 기반 일정관리 애플리케이션
+my-todolist - Clean Architecture 기반 인증 일정관리 애플리케이션
 
 ### 1.2 목적
 개인 사용자가 인증된 환경에서 안전하게 일정을 관리할 수 있는 브라우저 기반 애플리케이션 제공
@@ -12,6 +16,8 @@ my-todolist - 인증 기반 일정관리 애플리케이션
 - 사용자별 독립적인 일정 관리
 - 인증을 통한 데이터 보안
 - 직관적인 일정 등록 및 관리
+- **Clean Architecture를 통한 유지보수성 및 테스트 용이성**
+- **다크 모드 및 다국어 지원을 통한 사용자 경험 향상**
 
 ---
 
@@ -41,25 +47,38 @@ my-todolist
 ## 3. 주요 엔티티 (Entities)
 
 ### 3.1 User (사용자)
-| 속성 | 타입 | 설명 | 필수 |
-|------|------|------|------|
-| id | Long | 사용자 고유 식별자 | Y |
-| username | String | 사용자명 (로그인 ID) | Y |
-| password | String | 비밀번호 (암호화) | Y |
-| email | String | 이메일 주소 | Y |
-| createdAt | DateTime | 가입일시 | Y |
+| 속성 | 타입 | 설명 | 필수 | 제약사항 |
+|------|------|------|------|----------|
+| id | Number | 사용자 고유 식별자 | Y | Auto-increment |
+| username | String | 사용자명 (로그인 ID) | Y | 3-50자, Unique |
+| password | String | 비밀번호 (bcrypt 암호화) | Y | 60자 (해시값) |
+| email | String | 이메일 주소 | Y | RFC 5322 형식 |
+| createdAt | Date | 가입일시 | Y | Auto-generated |
+
+**비즈니스 메서드:**
+- `validateEmail()`: 이메일 형식 검증
+- `updateEmail(newEmail)`: 이메일 변경 (검증 포함)
+- `updateUsername(newUsername)`: 사용자명 변경 (길이 검증)
 
 ### 3.2 Todo (할일)
-| 속성 | 타입 | 설명 | 필수 |
-|------|------|------|------|
-| id | Long | 할일 고유 식별자 | Y |
-| userId | Long | 작성자 ID | Y |
-| title | String | 할일 제목 | Y |
-| description | String | 할일 상세 내용 | N |
-| dueDate | Date | 마감 날짜 | N |
-| isCompleted | Boolean | 완료 여부 | Y |
-| createdAt | DateTime | 생성일시 | Y |
-| updatedAt | DateTime | 수정일시 | Y |
+| 속성 | 타입 | 설명 | 필수 | 제약사항 |
+|------|------|------|------|----------|
+| id | Number | 할일 고유 식별자 | Y | Auto-increment |
+| userId | Number | 작성자 ID | Y | FK → User.id |
+| title | String | 할일 제목 | Y | 1-255자 |
+| description | String | 할일 상세 내용 | N | Optional |
+| dueDate | Date | 마감 날짜 | N | Optional, Date 타입 |
+| isCompleted | Boolean | 완료 여부 | Y | Default: false |
+| createdAt | Date | 생성일시 | Y | Auto-generated |
+| updatedAt | Date | 수정일시 | Y | Auto-updated |
+
+**비즈니스 메서드:**
+- `validate()`: 전체 필드 유효성 검증
+- `setTitle(title)`: 제목 변경 및 updatedAt 갱신
+- `setDescription(description)`: 설명 변경 및 updatedAt 갱신
+- `setDueDate(dueDate)`: 마감일 변경 및 updatedAt 갱신
+- `toggleCompletion()`: 완료 상태 토글 및 updatedAt 갱신
+- `belongsToUser(userId)`: 소유권 확인
 
 ---
 
@@ -68,16 +87,19 @@ my-todolist
 ### 4.1 사용자 관리 규칙
 - **BR-001**: 회원 등록은 누구나 가능하다
 - **BR-002**: username은 시스템 내에서 고유해야 한다
-- **BR-003**: 비밀번호는 암호화하여 저장해야 한다
+- **BR-003**: 비밀번호는 bcrypt(cost=10)로 암호화하여 저장해야 한다
 - **BR-004**: 로그인 시 유효한 자격증명을 검증해야 한다
+- **BR-005**: username은 3-50자 범위여야 한다 (신규)
+- **BR-006**: 이메일은 RFC 5322 형식을 준수해야 한다
 
 ### 4.2 할일 관리 규칙
 - **BR-101**: 할일 생성은 인증된 사용자만 가능하다
 - **BR-102**: 사용자는 본인이 생성한 할일만 조회/수정/삭제할 수 있다
-- **BR-103**: 할일 제목은 필수 입력 항목이다
+- **BR-103**: 할일 제목은 필수 입력 항목이다 (1-255자)
 - **BR-104**: 마감 날짜는 선택적으로 등록 가능하다
 - **BR-105**: 완료 처리된 할일은 isCompleted = true로 상태 변경된다
 - **BR-106**: 할일 수정 시 updatedAt이 자동 갱신된다
+- **BR-107**: 엔티티 레벨에서 비즈니스 규칙을 검증한다 (신규)
 
 ### 4.3 비즈니스 규칙 적용 매트릭스
 
@@ -406,3 +428,160 @@ bcrypt 알고리즘 (cost factor 10 이상)을 채택한다.
 **대안**:
 - Argon2: 최신 알고리즘이나 라이브러리 성숙도가 낮음
 - PBKDF2: NIST 승인이나 GPU 공격에 상대적으로 취약
+
+---
+
+### ADR-004: Clean Architecture 채택
+
+**상태**: 승인됨
+**날짜**: 2026-02-13
+**의사결정자**: 개발팀
+
+**컨텍스트**:
+- 초기 MVP는 단순한 3-tier 아키텍처로 구현됨
+- 코드 유지보수성과 테스트 용이성 향상 필요
+- 프론트엔드와 백엔드 모두 일관된 아키텍처 적용 필요
+
+**결정**:
+Clean Architecture (Hexagonal Architecture)를 프론트엔드와 백엔드 모두에 적용한다.
+
+**근거**:
+- **관심사의 분리**: 비즈니스 로직을 프레임워크와 독립적으로 유지
+- **테스트 용이성**: 각 계층을 독립적으로 테스트 가능
+- **의존성 역전**: 내부 계층이 외부 계층에 의존하지 않음
+- **유지보수성**: 기술 스택 변경 시 비즈니스 로직 영향 최소화
+- **일관성**: 프론트엔드/백엔드 동일한 패턴 적용
+
+**결과** (Backend):
+```
+backend/src/
+├── entities/           # 엔티티 (비즈니스 객체)
+├── usecases/          # 유스케이스 (비즈니스 로직)
+├── interfaces/        # 인터페이스 정의
+├── interface-adapters/
+│   └── controllers/   # 컨트롤러 (요청/응답 변환)
+├── frameworks-and-drivers/
+│   ├── repositories/  # 리포지토리 구현
+│   ├── PasswordHasher # 패스워드 해싱 구현
+│   └── TokenGenerator # JWT 토큰 생성 구현
+└── composition-root.js # DI 컨테이너
+```
+
+**결과** (Frontend):
+```
+frontend/src/
+├── domain/
+│   ├── entities/      # 도메인 엔티티
+│   └── repositories/  # 리포지토리 인터페이스
+├── application/
+│   ├── usecases/      # 유스케이스
+│   └── dtos/          # Data Transfer Objects
+├── infrastructure/
+│   ├── repositories/  # API 리포지토리 구현
+│   └── services/      # 외부 서비스 연동
+├── contexts/          # React Context (상태 관리)
+└── components/        # UI 컴포넌트
+```
+
+**대안**:
+- MVC: 간단하나 비즈니스 로직이 Controller나 Model에 혼재
+- Layered Architecture: 의존성 역전이 없어 테스트 어려움
+
+---
+
+### ADR-005: 다크 모드 및 다국어 지원 추가
+
+**상태**: 승인됨
+**날짜**: 2026-02-13
+**의사결정자**: 개발팀
+
+**컨텍스트**:
+- 사용자 경험 향상 필요
+- 다양한 사용 환경 대응 (밝은/어두운 환경)
+- 글로벌 사용자 대응 (한국어/영어)
+
+**결정**:
+1. CSS Variables 기반 다크 모드 시스템 구현
+2. ThemeContext를 통한 테마 관리
+3. LanguageContext를 통한 다국어 지원
+
+**근거**:
+- **사용자 선호도**: 다크 모드는 현대 앱의 필수 기능
+- **접근성**: 눈의 피로도 감소, 저조도 환경 대응
+- **확장성**: CSS Variables로 테마 쉽게 확장 가능
+- **글로벌화**: 다국어 지원으로 사용자층 확대
+
+**결과**:
+- 시스템 다크 모드 설정 자동 감지 (prefers-color-scheme)
+- localStorage에 사용자 선호도 저장
+- 토글 버튼으로 라이트/다크 모드 전환
+- 한국어/영어 지원 (LanguageContext)
+- 모든 UI 텍스트 다국어 처리
+
+**기술 구현**:
+```typescript
+// ThemeContext: 다크 모드 관리
+// LanguageContext: 다국어 관리
+// CSS Variables: :root, [data-theme="dark"]
+```
+
+---
+
+## 10. 변경 이력 (Change Log)
+
+### Version 2.0 (2026-02-13)
+
+#### 주요 변경사항
+
+**아키텍처 개선:**
+- ✅ Clean Architecture 적용 (Frontend & Backend)
+- ✅ SOLID 원칙 준수
+- ✅ 의존성 역전 원칙 적용
+- ✅ 리포지토리 패턴 구현
+- ✅ UseCase 패턴으로 비즈니스 로직 분리
+
+**엔티티 변경:**
+- 명명 규칙 변경: `snake_case` → `camelCase`
+  - `is_completed` → `isCompleted`
+  - `due_date` → `dueDate`
+  - `created_at` → `createdAt`
+  - `updated_at` → `updatedAt`
+- User 엔티티:
+  - username 길이 제한 추가 (3-50자)
+  - 비즈니스 메서드 추가: `validateEmail()`, `updateEmail()`, `updateUsername()`
+- Todo 엔티티:
+  - title 길이 제한 추가 (1-255자)
+  - 비즈니스 메서드 추가: `validate()`, `setTitle()`, `setDescription()`, `setDueDate()`, `toggleCompletion()`, `belongsToUser()`
+
+**신규 비즈니스 규칙:**
+- BR-005: username 3-50자 제약
+- BR-006: 이메일 RFC 5322 형식 준수
+- BR-107: 엔티티 레벨 비즈니스 규칙 검증
+
+**신규 기능:**
+- ✅ 다크 모드 지원 (CSS Variables + ThemeContext)
+- ✅ 다국어 지원 (LanguageContext - Korean/English)
+- ✅ 시스템 테마 자동 감지
+- ✅ 사용자 선호도 localStorage 저장
+
+**기술 스택 업데이트:**
+- Backend: Express.js + PostgreSQL + Clean Architecture
+- Frontend: React 19 + TypeScript + Vite + Clean Architecture
+- 인증: JWT (httpOnly cookie)
+- 패스워드: bcrypt (cost=10)
+
+**ADR 추가:**
+- ADR-004: Clean Architecture 채택
+- ADR-005: 다크 모드 및 다국어 지원
+
+---
+
+### Version 1.0 (2026-02-10)
+
+**초기 릴리스:**
+- 기본 사용자 관리 기능 (회원가입, 로그인)
+- 할일 CRUD 기능
+- JWT 기반 인증
+- bcrypt 패스워드 암호화
+- Hard Delete 전략
+- 3-tier 아키텍처
